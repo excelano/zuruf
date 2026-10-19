@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10000000000000000000003 /* ZurufWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* ZurufWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A10000000000000000000002 /* ZurufWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* ZurufWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A10000000000000000000001 /* ZurufNotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ZurufNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -26,6 +27,13 @@
 			remoteGlobalIDString = A80000000000000000000003;
 			remoteInfo = ZurufWidgets;
 		};
+		A30000000000000000000003 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A90000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A80000000000000000000001;
+			remoteInfo = ZurufWatch;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,14 +49,26 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A40000000000000000000002 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				A10000000000000000000003 /* ZurufWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000003 /* Zuruf.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Zuruf.xcconfig; sourceTree = "<group>"; };
 		A20000000000000000000004 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
-		A20000000000000000000001 /* Zuruf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zuruf.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000001 /* ZurufWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZurufWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000002 /* ZurufNotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ZurufNotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000005 /* ZurufWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ZurufWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000006 /* Zuruf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zuruf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -123,9 +143,10 @@
 		A70000000000000000000002 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000001 /* Zuruf.app */,
+				A20000000000000000000001 /* ZurufWatch.app */,
 				A20000000000000000000002 /* ZurufNotificationService.appex */,
 				A20000000000000000000005 /* ZurufWidgets.appex */,
+				A20000000000000000000006 /* Zuruf.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,9 +154,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A80000000000000000000001 /* Zuruf */ = {
+		A80000000000000000000001 /* ZurufWatch */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AC0000000000000000000002 /* Build configuration list for PBXNativeTarget "Zuruf" */;
+			buildConfigurationList = AC0000000000000000000002 /* Build configuration list for PBXNativeTarget "ZurufWatch" */;
 			buildPhases = (
 				AA0000000000000000000001 /* Sources */,
 				A60000000000000000000001 /* Frameworks */,
@@ -152,9 +173,9 @@
 				A50000000000000000000001 /* Zuruf */,
 				A50000000000000000000003 /* Shared */,
 			);
-			name = Zuruf;
-			productName = Zuruf;
-			productReference = A20000000000000000000001 /* Zuruf.app */;
+			name = ZurufWatch;
+			productName = ZurufWatch;
+			productReference = A20000000000000000000001 /* ZurufWatch.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A80000000000000000000002 /* ZurufNotificationService */ = {
@@ -199,6 +220,23 @@
 			productReference = A20000000000000000000005 /* ZurufWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		A80000000000000000000004 /* Zuruf */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC0000000000000000000005 /* Build configuration list for PBXNativeTarget "Zuruf" */;
+			buildPhases = (
+				AB0000000000000000000004 /* Resources */,
+				A40000000000000000000002 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AD0000000000000000000003 /* PBXTargetDependency */,
+			);
+			name = Zuruf;
+			productName = Zuruf;
+			productReference = A20000000000000000000006 /* Zuruf.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -218,6 +256,9 @@
 					A80000000000000000000003 = {
 						CreatedOnToolsVersion = 26.3;
 					};
+					A80000000000000000000004 = {
+						CreatedOnToolsVersion = 26.3;
+					};
 				};
 			};
 			buildConfigurationList = AC0000000000000000000001 /* Build configuration list for PBXProject "Zuruf" */;
@@ -234,7 +275,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A80000000000000000000001 /* Zuruf */,
+				A80000000000000000000004 /* Zuruf */,
+				A80000000000000000000001 /* ZurufWatch */,
 				A80000000000000000000002 /* ZurufNotificationService */,
 				A80000000000000000000003 /* ZurufWidgets */,
 			);
@@ -257,6 +299,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AB0000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB0000000000000000000004 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -299,6 +348,11 @@
 			isa = PBXTargetDependency;
 			target = A80000000000000000000003 /* ZurufWidgets */;
 			targetProxy = A30000000000000000000002 /* PBXContainerItemProxy */;
+		};
+		AD0000000000000000000003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A80000000000000000000001 /* ZurufWatch */;
+			targetProxy = A30000000000000000000003 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -470,6 +524,35 @@
 			};
 			name = Release;
 		};
+		AE0000000000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(ZURUF_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ZURUF_CONTAINER_BUNDLE_ID)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AE000000000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(ZURUF_DISPLAY_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(ZURUF_CONTAINER_BUNDLE_ID)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -482,7 +565,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AC0000000000000000000002 /* Build configuration list for PBXNativeTarget "Zuruf" */ = {
+		AC0000000000000000000002 /* Build configuration list for PBXNativeTarget "ZurufWatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AE0000000000000000000003 /* Debug */,
@@ -505,6 +588,15 @@
 			buildConfigurations = (
 				AE0000000000000000000007 /* Debug */,
 				AE0000000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC0000000000000000000005 /* Build configuration list for PBXNativeTarget "Zuruf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE0000000000000000000009 /* Debug */,
+				AE000000000000000000000A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

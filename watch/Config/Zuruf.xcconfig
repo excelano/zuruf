@@ -5,7 +5,9 @@
 // The values a fork changes to build its own copy of the app.
 
 DEVELOPMENT_TEAM = 9K6W5PMFYP
-ZURUF_BUNDLE_ID = com.excelano.zuruf.watchkitapp
+// The App Store record's bundle id, carried by the iOS stub that ships the watch app.
+ZURUF_CONTAINER_BUNDLE_ID = com.excelano.zuruf
+ZURUF_BUNDLE_ID = $(ZURUF_CONTAINER_BUNDLE_ID).watchkitapp
 ZURUF_DISPLAY_NAME = Zuruf
 
 // Host name only: xcconfig treats // as a comment, so the app adds https://.
