@@ -1,6 +1,6 @@
 # Zuruf
 
-Zuruf is a walkie-talkie for Apple Watch: hold a button, say something, and it plays on the other person's wrist a moment later, over Wi-Fi or cellular at any distance. It replaces Apple's Walkie-Talkie app for a family or another small group, and it needs no iPhone app. Each group runs its own small server, so clips pass through nothing but that server and Apple's push service, which carries only a short alert.
+Zuruf is a walkie-talkie for Apple Watch: hold a button, say something, and it plays on the other person's wrist a moment later, over Wi-Fi or cellular at any distance. It replaces Apple's Walkie-Talkie app for a small group of people, and it needs no iPhone app. Each group runs its own small server, so clips pass through nothing but that server and Apple's push service, which carries only a short alert.
 
 Messages are stored and forwarded rather than streamed. The watch records a clip and uploads it, the server sends a push to everyone it is addressed to, and each watch downloads the clip and plays it as the notification arrives. Clips can go to one person or to a group, the sender sees who has played them, and the server deletes them after a set number of days.
 
