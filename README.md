@@ -12,7 +12,7 @@ This repository holds the watch app, in `watch/`, and the server, in `server/`.
 
 The app is watch-only SwiftUI with a notification service extension. Joining takes the server's address, an invite code and a display name. From then on the app lists the people and groups on the server; choosing one opens a talk button that records while it is held and sends on release, keeping a clip on the watch and retrying until the server accepts it. A notification service extension downloads each incoming clip before its alert appears, and the notification plays it as soon as it shows, unless Play automatically is turned off in Settings or the watch is on silent, in which case the notification's Play button plays it. The inbox keeps recent clips for replay, with a reply to the sender or the group, and shows who has played each clip you sent.
 
-A complication, also offered in the Smart Stack, can be set to any person or group in the watch face editor, and tapping it opens the talk button for them.
+A complication, also offered in the Smart Stack, shows the person or group you last sent a clip to, and tapping it opens the talk button for them.
 
 The identity a fork changes, meaning the team id, the bundle id, the display name and the default server, lives in `watch/Config/Zuruf.xcconfig`, and the version in `watch/Config/Version.xcconfig`.
 

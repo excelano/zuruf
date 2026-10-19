@@ -1,5 +1,5 @@
 // TalkLink.swift
-// Intents
+// Shared
 // Author: David M. Anderson
 // Built with AI assistance (Claude, Anthropic)
 

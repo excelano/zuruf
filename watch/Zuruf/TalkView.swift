@@ -36,7 +36,7 @@ struct TalkView: View {
         .onAppear {
             recorder.onFinish = { file in
                 WKInterfaceDevice.current().play(.stop)
-                model.outbox.enqueue(file, to: recipient)
+                model.send(file, to: recipient)
             }
         }
     }

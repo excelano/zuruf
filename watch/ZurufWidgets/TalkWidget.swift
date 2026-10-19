@@ -3,7 +3,6 @@
 // Author: David M. Anderson
 // Built with AI assistance (Claude, Anthropic)
 
-import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -14,57 +13,34 @@ struct ZurufWidgets: WidgetBundle {
     }
 }
 
-struct SelectContactIntent: WidgetConfigurationIntent {
-    static let title: LocalizedStringResource = "Contact"
-
-    @Parameter(title: "Contact")
-    var contact: ContactEntity?
-
-    init() {}
-
-    init(contact: ContactEntity?) {
-        self.contact = contact
-    }
-}
-
 struct TalkEntry: TimelineEntry {
     let date: Date
     let recipient: Recipient?
 }
 
-struct TalkProvider: AppIntentTimelineProvider {
+// The app reloads this timeline whenever it sends a clip to someone new.
+struct TalkProvider: TimelineProvider {
     func placeholder(in context: Context) -> TalkEntry {
         TalkEntry(date: .now, recipient: nil)
     }
 
-    func snapshot(for configuration: SelectContactIntent, in context: Context) async -> TalkEntry {
-        TalkEntry(date: .now, recipient: configuration.contact?.recipient)
+    func getSnapshot(in context: Context, completion: @escaping (TalkEntry) -> Void) {
+        completion(TalkEntry(date: .now, recipient: LastRecipient.load()))
     }
 
-    func timeline(for configuration: SelectContactIntent, in context: Context) async -> Timeline<TalkEntry> {
-        Timeline(entries: [TalkEntry(date: .now, recipient: configuration.contact?.recipient)], policy: .never)
-    }
-
-    // watchOS offers these in the face editor in place of a configuration screen.
-    func recommendations() -> [AppIntentRecommendation<SelectContactIntent>] {
-        [AppIntentRecommendation(intent: SelectContactIntent(contact: nil), description: "Zuruf")]
-            + ContactsCache.load().map { recipient in
-                AppIntentRecommendation(
-                    intent: SelectContactIntent(contact: ContactEntity(recipient: recipient)),
-                    description: "Talk to \(recipient.name)"
-                )
-            }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<TalkEntry>) -> Void) {
+        completion(Timeline(entries: [TalkEntry(date: .now, recipient: LastRecipient.load())], policy: .never))
     }
 }
 
 struct TalkWidget: Widget {
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: "Talk", intent: SelectContactIntent.self, provider: TalkProvider()) { entry in
+        StaticConfiguration(kind: "Talk", provider: TalkProvider()) { entry in
             TalkWidgetView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Talk")
-        .description("Opens Zuruf ready to talk.")
+        .description("Opens Zuruf ready to talk to whoever you last talked to.")
         .supportedFamilies([.accessoryCircular, .accessoryCorner, .accessoryRectangular, .accessoryInline])
     }
 }

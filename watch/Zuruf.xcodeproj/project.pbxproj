@@ -67,11 +67,6 @@
 			path = ZurufNotificationService;
 			sourceTree = "<group>";
 		};
-		A50000000000000000000004 /* Intents */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Intents;
-			sourceTree = "<group>";
-		};
 		A50000000000000000000005 /* ZurufWidgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ZurufWidgets;
@@ -110,7 +105,6 @@
 				A50000000000000000000001 /* Zuruf */,
 				A50000000000000000000002 /* ZurufNotificationService */,
 				A50000000000000000000003 /* Shared */,
-				A50000000000000000000004 /* Intents */,
 				A50000000000000000000005 /* ZurufWidgets */,
 				A70000000000000000000003 /* Config */,
 				A70000000000000000000002 /* Products */,
@@ -157,7 +151,6 @@
 			fileSystemSynchronizedGroups = (
 				A50000000000000000000001 /* Zuruf */,
 				A50000000000000000000003 /* Shared */,
-				A50000000000000000000004 /* Intents */,
 			);
 			name = Zuruf;
 			productName = Zuruf;
@@ -200,7 +193,6 @@
 			fileSystemSynchronizedGroups = (
 				A50000000000000000000005 /* ZurufWidgets */,
 				A50000000000000000000003 /* Shared */,
-				A50000000000000000000004 /* Intents */,
 			);
 			name = ZurufWidgets;
 			productName = ZurufWidgets;

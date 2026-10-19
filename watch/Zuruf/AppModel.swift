@@ -46,8 +46,8 @@ final class AppModel: ObservableObject {
 
     func leave() {
         AccountStore.delete()
-        ContactsCache.clear()
-        WidgetCenter.shared.invalidateConfigurationRecommendations()
+        LastRecipient.clear()
+        WidgetCenter.shared.reloadTimelines(ofKind: "Talk")
         outbox.removeAll()
         account = nil
         contacts = nil
@@ -69,17 +69,19 @@ final class AppModel: ObservableObject {
         do {
             async let fetchedContacts = api.contacts()
             async let fetchedClips = api.clips()
-            let contacts = try await fetchedContacts
-            self.contacts = contacts
+            self.contacts = try await fetchedContacts
             self.clips = try await fetchedClips
-            let recipients = contacts.groups.map { Recipient.group(id: $0.id, name: $0.name) }
-                + contacts.users.map { Recipient.person(id: $0.id, name: $0.displayName) }
-            if ContactsCache.save(recipients) {
-                WidgetCenter.shared.invalidateConfigurationRecommendations()
-            }
             refreshError = nil
         } catch {
             refreshError = error.localizedDescription
+        }
+    }
+
+    func send(_ file: URL, to recipient: Recipient) {
+        outbox.enqueue(file, to: recipient)
+        if LastRecipient.load() != recipient {
+            LastRecipient.save(recipient)
+            WidgetCenter.shared.reloadTimelines(ofKind: "Talk")
         }
     }
 
