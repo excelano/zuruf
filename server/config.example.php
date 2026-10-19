@@ -30,6 +30,10 @@ define('CLIP_TTL_DAYS', 7);
 define('INVITE_TTL_DAYS', 7);
 define('UPLOADS_PER_MINUTE', 10);
 
+// An invite code that never expires and can be redeemed any number of times,
+// for a demo server such as the one App Review uses. Leave empty everywhere else.
+define('REVIEW_INVITE_CODE', '');
+
 // A built-in contact that sends every clip it receives back to its sender.
 define('ECHO_BOT_ENABLED', true);
 define('ECHO_DELAY_SECONDS', 3);

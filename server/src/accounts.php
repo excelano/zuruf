@@ -32,8 +32,13 @@ function createInvite(int $ttlDays): array {
     return ['code' => substr($code, 0, 5) . '-' . substr($code, 5), 'expires_at' => $expiresAt];
 }
 
+function isReviewCode(string $code): bool {
+    return REVIEW_INVITE_CODE !== '' && hash_equals(normalizeInviteCode(REVIEW_INVITE_CODE), $code);
+}
+
 function redeemInvite(array $body): never {
-    $codeHash = tokenHash(normalizeInviteCode((string)($body['code'] ?? '')));
+    $code = normalizeInviteCode((string)($body['code'] ?? ''));
+    $codeHash = tokenHash($code);
     $name = textField($body, 'display_name', 40);
     $now = time();
     $userId = randomId();
@@ -43,11 +48,11 @@ function redeemInvite(array $body): never {
     $db = getDb();
     $db->beginTransaction();
     query('INSERT INTO users (id, display_name, created_at) VALUES (?, ?, ?)', [$userId, $name, $now]);
-    $claimed = query(
+    $claimed = isReviewCode($code) || query(
         'UPDATE invites SET redeemed_by = ?, redeemed_at = ? WHERE code_hash = ? AND redeemed_at IS NULL AND expires_at > ?',
         [$userId, $now, $codeHash, $now]
-    )->rowCount();
-    if ($claimed !== 1) {
+    )->rowCount() === 1;
+    if (!$claimed) {
         $db->rollBack();
         fail(403, 'invalid_invite');
     }

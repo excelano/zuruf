@@ -14,7 +14,7 @@ base=http://127.0.0.1:$port
 admin=test-admin-token
 failures=0
 
-export ZURUF_CONFIG=$server/tests/config.php ZURUF_DATA_DIR=$work/data
+export ZURUF_CONFIG=$server/tests/config.php ZURUF_DATA_DIR=$work/data ZURUF_REVIEW_CODE=REVIEW-2026
 php -S 127.0.0.1:$port -t "$server/public" "$server/public/index.php" > "$work/server.log" 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null; rm -rf "$work"' EXIT
@@ -75,6 +75,14 @@ json POST /v1/invites/redeem "" "{\"code\": \"$alice_code\", \"display_name\": \
 expect 403 "invite is single-use"
 json POST /v1/invites/redeem "" '{"code": "AAAAA-AAAAA", "display_name": "Mallory"}'
 expect 403 "unknown invite"
+json POST /v1/invites/redeem "" '{"code": "review-2026", "display_name": "Reviewer"}'
+expect 201 "the review code redeems"
+first_reviewer=$(jq -r .token <<< "$body")
+json POST /v1/invites/redeem "" '{"code": "REVIEW-2026", "display_name": "Second reviewer"}'
+expect 201 "the review code redeems again"
+second_reviewer=$(jq -r .token <<< "$body")
+call DELETE /v1/account $first_reviewer
+call DELETE /v1/account $second_reviewer
 json POST /v1/invites/redeem "" "{\"code\": \"$bob_code\", \"display_name\": \"\"}"
 expect 422 "display name required"
 

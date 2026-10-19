@@ -15,6 +15,7 @@ define('MAX_CLIP_SECONDS', 60);
 define('MAX_CLIP_BYTES', 2_000_000);
 define('CLIP_TTL_DAYS', 7);
 define('INVITE_TTL_DAYS', 7);
+define('REVIEW_INVITE_CODE', getenv('ZURUF_REVIEW_CODE') ?: '');
 define('UPLOADS_PER_MINUTE', 10);
 define('ECHO_BOT_ENABLED', true);
 define('ECHO_DELAY_SECONDS', 1);
