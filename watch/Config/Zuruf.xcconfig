@@ -1,0 +1,14 @@
+// Zuruf.xcconfig
+// Author: David M. Anderson
+// Built with AI assistance (Claude, Anthropic)
+//
+// The values a fork changes to build its own copy of the app.
+
+DEVELOPMENT_TEAM = 9K6W5PMFYP
+ZURUF_BUNDLE_ID = com.excelano.zuruf.watchkitapp
+ZURUF_DISPLAY_NAME = Zuruf
+
+// Host name only: xcconfig treats // as a comment, so the app adds https://.
+ZURUF_DEFAULT_SERVER = zuruf.excelano.com
+
+#include "Version.xcconfig"
