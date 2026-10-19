@@ -26,7 +26,7 @@ The Zuruf server is built from source and self-hosted by each operator. Security
 
 **Serve over HTTPS.** The server refuses plain HTTP, but the certificate is yours to keep valid.
 
-**Keep the document root at `server/public/`.** That is what keeps `config.php`, the APNs keys, the database and the clip files off the web. Pointing the document root at `server/` would expose all of them.
+**Keep everything but `public/` out of the document root.** Either point the document root at `server/public/`, or put the rest of the server in a `zuruf-server` folder beside the document root. That is what keeps `config.php`, the APNs keys, the database and the clip files off the web; serving `server/` itself would expose all of them.
 
 **Guard the admin token and the APNs keys.** The admin token can create accounts and remove users. A topic-restricted APNs key can push only to your app, but it can push anything to every device that has registered with it.
 

@@ -5,7 +5,9 @@
 
 declare(strict_types=1);
 
-$root = dirname(__DIR__);
+// The server sits beside public/, or, on hosts where the document root cannot
+// be moved to public/, in a zuruf-server folder beside the document root.
+$root = is_file(dirname(__DIR__) . '/src/schema.sql') ? dirname(__DIR__) : dirname(__DIR__) . '/zuruf-server';
 require getenv('ZURUF_CONFIG') ?: $root . '/config.php';
 require $root . '/src/db.php';
 require $root . '/src/http.php';

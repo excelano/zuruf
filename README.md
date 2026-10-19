@@ -31,7 +31,7 @@ Only `public/` is reachable from the web. Everything else sits beside it, so the
 
 You need an Apple Developer account. In Certificates, Identifiers & Profiles, register an App ID for the watch app with Push Notifications enabled, then create an APNs key for each environment, restricted to that App ID's topic. Development builds installed from Xcode use the sandbox key; TestFlight and App Store builds use the production key. Apple lets you download each `.p8` file once.
 
-Point a hostname's document root at `server/public/` and upload the `server/` directory. The server must sit at the root of its hostname, and it refuses plain HTTP. Copy `config.example.php` to `config.php`, fill in your team id, the watch app's bundle id, both key ids, and a long random admin token, and put the `.p8` files in `keys/`. Then add an hourly cron job:
+Point a hostname's document root at `server/public/` and upload the `server/` directory. If your host will not move a document root, upload the contents of `public/` into the document root it gave you and the rest of `server/` into a folder named `zuruf-server` beside it; `index.php` looks there when it finds no server beside itself. The server must sit at the root of its hostname, and it refuses plain HTTP. Copy `config.example.php` to `config.php`, fill in your team id, the watch app's bundle id, both key ids, and a long random admin token, and put the `.p8` files in `keys/`. Then add an hourly cron job:
 
 ```bash
 php /path/to/server/cron.php
