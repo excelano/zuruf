@@ -14,7 +14,7 @@ The app is watch-only SwiftUI with a notification service extension. Joining tak
 
 A complication, also offered in the Smart Stack, shows the person or group you last sent a clip to, and tapping it opens the talk button for them.
 
-The identity a fork changes, meaning the team id, the bundle id, the display name and the default server, lives in `watch/Config/Zuruf.xcconfig`, and the version in `watch/Config/Version.xcconfig`.
+The identity a fork changes, meaning the team id, the App Store bundle id, the display name and the default server, lives in `watch/Config/Zuruf.xcconfig`, and the version in `watch/Config/Version.xcconfig`. The App Store accepts a watch-only app inside an iOS stub with no code, so the project's `Zuruf` scheme archives that stub with the watch app embedded; `ZurufWatch` builds the watch app alone for installing on a watch during development.
 
 ## The server
 
