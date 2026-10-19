@@ -163,6 +163,21 @@ expect 404 "expired clip is gone"
 php "$server/cron.php" > /dev/null
 [[ ! -e "$work/data/clips/$clip.m4a" ]] && echo "ok   cron deletes expired clip files" || { echo "FAIL expired file remains"; failures=$((failures + 1)); }
 
+json POST /v1/admin/invites $admin '{}'
+carol_code=$(jq -r .code <<< "$body")
+json POST /v1/invites/redeem "" "{\"code\": \"$carol_code\", \"display_name\": \"Carol\"}"
+carol=$(jq -r .token <<< "$body")
+carol_id=$(jq -r .user_id <<< "$body")
+call POST /v1/clips $carol -F "to_user=$alice_id" -F "audio=@$work/short.m4a"
+carol_clip=$(jq -r .id <<< "$body")
+call DELETE /v1/account $carol
+expect 200 "delete own account"
+call GET /v1/contacts $carol
+expect 401 "deleted account's token stops working"
+[[ ! -e "$work/data/clips/$carol_clip.m4a" ]] && echo "ok   deleting an account deletes its clip files" || { echo "FAIL clip file remains after account deletion"; failures=$((failures + 1)); }
+call GET /v1/contacts $alice
+check "deleted account leaves the contact list" "[.users[].id] | index(\"$carol_id\") == null"
+
 call DELETE "/v1/admin/groups/$group/members/$bob_id" $admin
 expect 200 "remove group member"
 call DELETE "/v1/admin/users/$bob_id" $admin

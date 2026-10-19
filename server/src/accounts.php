@@ -84,6 +84,23 @@ function updateDevice(array $device, array $body): never {
     respond(200, ['device_id' => $device['id']]);
 }
 
+// Removes the user, their devices and every clip sent by or to them.
+function deleteUser(string $userId): bool {
+    $clipIds = query(
+        'SELECT id FROM clips WHERE sender_id = ? OR recipient_user_id = ?', [$userId, $userId]
+    )->fetchAll(PDO::FETCH_COLUMN);
+    if (query('DELETE FROM users WHERE id = ?', [$userId])->rowCount() === 0) {
+        return false;
+    }
+    deleteClipFiles($clipIds);
+    return true;
+}
+
+function deleteAccount(array $device): never {
+    deleteUser($device['user_id']);
+    respond(200, ['deleted' => $device['user_id']]);
+}
+
 function listContacts(array $device): never {
     echoBotId();
     $users = query(

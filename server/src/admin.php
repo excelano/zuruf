@@ -29,13 +29,9 @@ function adminListUsers(): never {
 }
 
 function adminDeleteUser(string $userId): never {
-    $clipIds = query(
-        'SELECT id FROM clips WHERE sender_id = ? OR recipient_user_id = ?', [$userId, $userId]
-    )->fetchAll(PDO::FETCH_COLUMN);
-    if (query('DELETE FROM users WHERE id = ?', [$userId])->rowCount() === 0) {
+    if (!deleteUser($userId)) {
         fail(404, 'not_found');
     }
-    deleteClipFiles($clipIds);
     respond(200, ['deleted' => $userId]);
 }
 

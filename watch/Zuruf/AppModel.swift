@@ -44,7 +44,17 @@ final class AppModel: ObservableObject {
         await refresh()
     }
 
-    func leave() {
+    // Deletes the account on the server, then forgets it here. An account the
+    // server no longer knows is already gone, so a 401 still signs out.
+    func deleteAccount() async throws {
+        do {
+            try await api?.deleteAccount()
+        } catch APIError.status(401, _) {
+        }
+        signOut()
+    }
+
+    private func signOut() {
         AccountStore.delete()
         LastRecipient.clear()
         WidgetCenter.shared.reloadTimelines(ofKind: "Talk")

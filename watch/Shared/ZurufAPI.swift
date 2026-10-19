@@ -78,6 +78,10 @@ struct ZurufAPI {
         _ = try await Self.data(for: request)
     }
 
+    func deleteAccount() async throws {
+        _ = try await Self.data(for: request("v1/account", method: "DELETE"))
+    }
+
     func contacts() async throws -> Contacts {
         try await Self.send(request("v1/contacts"))
     }

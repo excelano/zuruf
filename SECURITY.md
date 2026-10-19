@@ -16,7 +16,7 @@ The Zuruf server is built from source and self-hosted by each operator. Security
 
 **A clip is readable only by the people it was sent to.** The audio endpoint serves a clip to its recipient, or to the members of its group, and to no one else, the sender included. Clip ids are random. Clip files live outside the web root and leave the server only through that authenticated endpoint.
 
-**Clips do not last.** Each clip carries an expiry, the server stops serving it once that passes, and the hourly cron deletes the file and its record. Removing a user deletes their devices and every clip sent by or to them.
+**Clips do not last.** Each clip carries an expiry, the server stops serving it once that passes, and the hourly cron deletes the file and its record. Deleting an account, from the app's Settings or by the operator, deletes its devices and every clip sent by or to it.
 
 **Apple carries alerts, not audio.** A push holds the sender's name, the clip id and the server id. The watch fetches the audio from the server directly.
 

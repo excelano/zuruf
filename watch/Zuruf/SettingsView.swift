@@ -8,7 +8,9 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject private var model: AppModel
     @AppStorage(ClipNotification.playAutomaticallyKey) private var playAutomatically = true
-    @State private var confirmLeave = false
+    @State private var confirmDelete = false
+    @State private var isDeleting = false
+    @State private var deleteError: String?
 
     var body: some View {
         List {
@@ -23,15 +25,36 @@ struct SettingsView: View {
                     LabeledContent("Server", value: account.serverURL.host() ?? "")
                 }
             }
-            Button("Leave server", role: .destructive) {
-                confirmLeave = true
+            Section {
+                Button(isDeleting ? "Deleting…" : "Delete account", role: .destructive) {
+                    confirmDelete = true
+                }
+                .disabled(isDeleting)
+            } footer: {
+                if let deleteError {
+                    Text(deleteError)
+                        .foregroundStyle(.red)
+                }
             }
         }
         .navigationTitle("Settings")
-        .confirmationDialog("Leave this server?", isPresented: $confirmLeave) {
-            Button("Leave", role: .destructive) { model.leave() }
+        .confirmationDialog("Delete your account?", isPresented: $confirmDelete) {
+            Button("Delete", role: .destructive) { delete() }
         } message: {
-            Text("You will need a new invite to join again.")
+            Text("Your account and every message you sent or received are deleted from the server. You will need a new invite to join again.")
+        }
+    }
+
+    private func delete() {
+        isDeleting = true
+        deleteError = nil
+        Task {
+            do {
+                try await model.deleteAccount()
+            } catch {
+                deleteError = error.localizedDescription
+            }
+            isDeleting = false
         }
     }
 }
