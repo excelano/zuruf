@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zuruf Privacy Policy</title>
+<style>
+:root { --bg: #fafaf8; --text: #1c1b1f; --muted: #55545a; --accent: #8a6d00; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #18181b; --text: #ececee; --muted: #a8a7ad; --accent: #facc15; }
+}
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 system-ui, -apple-system, sans-serif; }
+main { max-width: 680px; margin: 0 auto; padding: 48px 16px 64px; }
+h1 { font-size: 30px; margin: 0 0 4px; }
+h2 { font-size: 20px; margin: 36px 0 8px; }
+p { margin: 0 0 14px; }
+.updated { color: var(--muted); margin-bottom: 32px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<h1>Zuruf Privacy Policy</h1>
+<p class="updated">Effective October 19, 2026</p>
+
+<p>Zuruf is a walkie-talkie for Apple Watch. This policy covers the Zuruf app published by Excelano LLC and the Zuruf server it operates at zuruf.excelano.com. Zuruf is invite-only: nobody can use it without an invitation from the person who runs the server.</p>
+
+<h2>What the server stores</h2>
+<p>When you join with an invite, the server stores the display name you choose and creates an account for your watch. It keeps a token that identifies your watch to the server, stored only as a one-way hash, and the push notification token Apple assigns your watch, so it can tell your watch when a message arrives.</p>
+<p>When you send a message, the server stores the recording, who sent it, who it is for, its length and when it was sent. It also records when each recipient plays it, so the sender can see who has heard it. Recordings and their records are deleted seven days after they are sent.</p>
+<p>The server does not collect your location, your contacts, your health data, advertising identifiers or anything else from your watch, and it contains no analytics, advertising or tracking code.</p>
+
+<h2>Who can see your messages</h2>
+<p>A recording is served only to the people it was sent to: one person, or the members of a group. Everyone on the server can see the display names of everyone else on it, so that they can choose who to talk to.</p>
+<p>Recordings travel between your watch and the server over an encrypted connection and are stored on the server unencrypted. The server's operator can therefore technically access them. Zuruf does not offer end-to-end encryption.</p>
+
+<h2>Apple and the hosting provider</h2>
+<p>To tell your watch about a new message, the server sends a notification through Apple's push notification service. The notification carries the sender's display name, the group name if there is one, and an identifier for the message. The recording itself never passes through Apple; your watch downloads it from the server.</p>
+<p>The server runs on shared web hosting. Like any website, the hosting provider's web server keeps access logs, which include the IP address of each request.</p>
+<p>Nothing is sold or shared with anyone else.</p>
+
+<h2>Deleting your data</h2>
+<p>Recordings delete themselves after seven days. To have your account removed, ask the person who invited you, or write to the address below. Removing an account deletes its watch registrations and every message sent by or to it. Leaving the server from the app's Settings signs your watch out and erases what the app stored on the watch.</p>
+
+<h2>Children</h2>
+<p>Zuruf is meant for families. A parent or guardian decides whether to invite a child, and the operator holds the same information for a child as for anyone else, as described above.</p>
+
+<h2>Changes and contact</h2>
+<p>If this policy changes, the new version will be posted here with a new effective date. Questions go to <a href="mailto:david.anderson@excelano.com">david.anderson@excelano.com</a>.</p>
+</main>
+</body>
+</html>
