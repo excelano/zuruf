@@ -55,7 +55,7 @@ private struct ReceivedRow: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
-                Text(clip.createdAt, style: .relative)
+                Text(clip.createdAt, format: .relative(presentation: .named))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

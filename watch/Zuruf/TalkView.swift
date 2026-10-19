@@ -12,6 +12,10 @@ struct TalkView: View {
     @StateObject private var recorder = Recorder()
     @State private var isPressed = false
     @State private var micDenied = false
+    private let demoStartedAt: Date? = DemoMode.has("--demo-recording") ? Date().addingTimeInterval(-4) : nil
+
+    private var isRecording: Bool { recorder.isRecording || demoStartedAt != nil }
+    private var startedAt: Date? { recorder.startedAt ?? demoStartedAt }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -20,9 +24,10 @@ struct TalkView: View {
                 .lineLimit(1)
             ZStack {
                 Circle()
-                    .fill(recorder.isRecording ? Color.red : Color.accentColor)
+                    .fill(isRecording ? Color.red : Color.accentColor)
                 Image(systemName: "mic.fill")
                     .font(.system(size: 36))
+                    .foregroundStyle(isRecording ? Color.white : Color.black)
             }
             .scaleEffect(isPressed ? 0.94 : 1)
             .gesture(
@@ -47,7 +52,7 @@ struct TalkView: View {
             Text("Allow the microphone in Settings")
                 .font(.footnote)
                 .foregroundStyle(.red)
-        } else if let startedAt = recorder.startedAt {
+        } else if let startedAt {
             Text(timerInterval: startedAt...startedAt.addingTimeInterval(Recorder.maxDuration), countsDown: false)
                 .font(.footnote.monospacedDigit())
         } else {

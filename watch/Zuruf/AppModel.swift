@@ -18,11 +18,13 @@ final class AppModel: ObservableObject {
     static let apnsEnvironment = "production"
     #endif
 
-    @Published private(set) var account = AccountStore.load()
-    @Published private(set) var contacts: Contacts?
-    @Published private(set) var clips: ClipList?
+    @Published private(set) var account = DemoMode.isActive ? DemoMode.account : AccountStore.load()
+    @Published private(set) var contacts: Contacts? = DemoMode.isActive ? DemoMode.contacts : nil
+    @Published private(set) var clips: ClipList? = DemoMode.isActive ? DemoMode.clips : nil
     @Published private(set) var refreshError: String?
-    @Published var talkPath: [Recipient] = []
+    @Published var talkPath: [Recipient] = DemoMode.has("--demo-talk")
+        ? [.group(id: DemoMode.family.id, name: DemoMode.family.name)] : []
+    @Published var showInbox = DemoMode.has("--demo-inbox")
     let outbox = Outbox()
 
     private var apnsToken: String?
@@ -65,6 +67,7 @@ final class AppModel: ObservableObject {
     }
 
     func requestNotifications() async {
+        guard !DemoMode.isActive else { return }
         _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
         WKApplication.shared().registerForRemoteNotifications()
     }
@@ -75,7 +78,7 @@ final class AppModel: ObservableObject {
     }
 
     func refresh() async {
-        guard let api else { return }
+        guard let api, !DemoMode.isActive else { return }
         do {
             async let fetchedContacts = api.contacts()
             async let fetchedClips = api.clips()

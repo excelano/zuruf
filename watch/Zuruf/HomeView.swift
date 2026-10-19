@@ -13,8 +13,8 @@ struct HomeView: View {
         NavigationStack(path: $model.talkPath) {
             List {
                 Section {
-                    NavigationLink {
-                        InboxView()
+                    Button {
+                        model.showInbox = true
                     } label: {
                         HStack {
                             Label("Inbox", systemImage: "tray")
@@ -34,7 +34,7 @@ struct HomeView: View {
                     Section("Groups") {
                         ForEach(groups) { group in
                             NavigationLink(value: Recipient.group(id: group.id, name: group.name)) {
-                                Label(group.name, systemImage: "person.3")
+                                Label(group.name, systemImage: "person.2")
                             }
                         }
                     }
@@ -62,6 +62,9 @@ struct HomeView: View {
             .navigationTitle("Zuruf")
             .navigationDestination(for: Recipient.self) { recipient in
                 TalkView(recipient: recipient)
+            }
+            .navigationDestination(isPresented: $model.showInbox) {
+                InboxView()
             }
             .refreshable {
                 await model.refresh()
