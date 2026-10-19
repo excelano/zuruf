@@ -23,7 +23,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var clips: ClipList? = DemoMode.isActive ? DemoMode.clips : nil
     @Published private(set) var refreshError: String?
     @Published var talkPath: [Recipient] = DemoMode.has("--demo-talk")
-        ? [.group(id: DemoMode.family.id, name: DemoMode.family.name)] : []
+        ? [.group(id: DemoMode.crew.id, name: DemoMode.crew.name)] : []
     @Published var showInbox = DemoMode.has("--demo-inbox")
     let outbox = Outbox()
 
