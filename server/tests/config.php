@@ -1,0 +1,21 @@
+<?php
+// config.php
+// Author: David M. Anderson
+// Built with AI assistance (Claude, Anthropic)
+
+define('ADMIN_TOKEN', 'test-admin-token');
+define('APNS_TEAM_ID', 'TEAMID');
+define('APNS_TOPIC', 'com.example.zuruf.watchkitapp');
+define('APNS_KEYS', [
+    'sandbox' => ['id' => '', 'path' => ''],
+    'production' => ['id' => '', 'path' => ''],
+]);
+define('DATA_DIR', getenv('ZURUF_DATA_DIR'));
+define('MAX_CLIP_SECONDS', 60);
+define('MAX_CLIP_BYTES', 2_000_000);
+define('CLIP_TTL_DAYS', 7);
+define('INVITE_TTL_DAYS', 7);
+define('UPLOADS_PER_MINUTE', 10);
+define('ECHO_BOT_ENABLED', true);
+define('ECHO_DELAY_SECONDS', 1);
+define('REQUIRE_HTTPS', false);

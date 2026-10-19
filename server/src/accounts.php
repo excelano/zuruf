@@ -1,0 +1,112 @@
+<?php
+// accounts.php
+// Author: David M. Anderson
+// Built with AI assistance (Claude, Anthropic)
+
+declare(strict_types=1);
+
+// Unambiguous characters only, since codes are typed on a watch.
+const INVITE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const INVITE_LENGTH = 10;
+
+function newInviteCode(): string {
+    $code = '';
+    for ($i = 0; $i < INVITE_LENGTH; $i++) {
+        $code .= INVITE_ALPHABET[random_int(0, strlen(INVITE_ALPHABET) - 1)];
+    }
+    return $code;
+}
+
+function normalizeInviteCode(string $code): string {
+    return preg_replace('/[^A-Z0-9]/', '', strtoupper($code));
+}
+
+function createInvite(int $ttlDays): array {
+    $code = newInviteCode();
+    $now = time();
+    $expiresAt = $now + $ttlDays * 86400;
+    query(
+        'INSERT INTO invites (code_hash, created_at, expires_at) VALUES (?, ?, ?)',
+        [tokenHash($code), $now, $expiresAt]
+    );
+    return ['code' => substr($code, 0, 5) . '-' . substr($code, 5), 'expires_at' => $expiresAt];
+}
+
+function redeemInvite(array $body): never {
+    $codeHash = tokenHash(normalizeInviteCode((string)($body['code'] ?? '')));
+    $name = textField($body, 'display_name', 40);
+    $now = time();
+    $userId = randomId();
+    $deviceId = randomId();
+    $token = bin2hex(random_bytes(32));
+
+    $db = getDb();
+    $db->beginTransaction();
+    query('INSERT INTO users (id, display_name, created_at) VALUES (?, ?, ?)', [$userId, $name, $now]);
+    $claimed = query(
+        'UPDATE invites SET redeemed_by = ?, redeemed_at = ? WHERE code_hash = ? AND redeemed_at IS NULL AND expires_at > ?',
+        [$userId, $now, $codeHash, $now]
+    )->rowCount();
+    if ($claimed !== 1) {
+        $db->rollBack();
+        fail(403, 'invalid_invite');
+    }
+    query(
+        'INSERT INTO devices (id, user_id, api_token_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+        [$deviceId, $userId, tokenHash($token), $now, $now]
+    );
+    $db->commit();
+
+    respond(201, [
+        'user_id' => $userId,
+        'device_id' => $deviceId,
+        'token' => $token,
+        'server_id' => serverId(),
+    ]);
+}
+
+function updateDevice(array $device, array $body): never {
+    $apnsToken = strtolower((string)($body['apns_token'] ?? ''));
+    $apnsEnv = (string)($body['apns_env'] ?? '');
+    if (!preg_match('/^[0-9a-f]{64,200}$/', $apnsToken)) {
+        fail(422, 'invalid_apns_token');
+    }
+    if (!in_array($apnsEnv, ['sandbox', 'production'], true)) {
+        fail(422, 'invalid_apns_env');
+    }
+
+    // A watch that redeems a second invite keeps its APNs token; only the newest device row should receive pushes.
+    query('UPDATE devices SET apns_token = NULL WHERE apns_token = ? AND id <> ?', [$apnsToken, $device['id']]);
+    query(
+        'UPDATE devices SET apns_token = ?, apns_env = ?, updated_at = ? WHERE id = ?',
+        [$apnsToken, $apnsEnv, time(), $device['id']]
+    );
+    respond(200, ['device_id' => $device['id']]);
+}
+
+function listContacts(array $device): never {
+    echoBotId();
+    $users = query(
+        'SELECT id, display_name, is_bot FROM users WHERE id <> ? ORDER BY display_name COLLATE NOCASE',
+        [$device['user_id']]
+    )->fetchAll();
+    $groups = query(
+        'SELECT g.id, g.name FROM groups g JOIN group_members m ON m.group_id = g.id
+         WHERE m.user_id = ? ORDER BY g.name COLLATE NOCASE',
+        [$device['user_id']]
+    )->fetchAll();
+    foreach ($groups as &$group) {
+        $group['member_ids'] = query('SELECT user_id FROM group_members WHERE group_id = ?', [$group['id']])
+            ->fetchAll(PDO::FETCH_COLUMN);
+    }
+    unset($group);
+
+    respond(200, [
+        'users' => array_map(fn($u) => [
+            'id' => $u['id'],
+            'display_name' => $u['display_name'],
+            'is_bot' => (bool)$u['is_bot'],
+        ], $users),
+        'groups' => $groups,
+    ]);
+}
