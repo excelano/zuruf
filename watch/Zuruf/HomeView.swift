@@ -10,7 +10,7 @@ struct HomeView: View {
     @ObservedObject private var outbox = AppModel.shared.outbox
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $model.talkPath) {
             List {
                 Section {
                     NavigationLink {

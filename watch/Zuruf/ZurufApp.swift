@@ -23,6 +23,11 @@ struct ZurufApp: App {
                 }
             }
             .environmentObject(model)
+            .onOpenURL { url in
+                if let recipient = TalkLink.recipient(from: url) {
+                    model.talk(to: recipient)
+                }
+            }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {

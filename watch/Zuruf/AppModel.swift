@@ -6,6 +6,7 @@
 import Foundation
 import UserNotifications
 import WatchKit
+import WidgetKit
 
 @MainActor
 final class AppModel: ObservableObject {
@@ -21,6 +22,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var contacts: Contacts?
     @Published private(set) var clips: ClipList?
     @Published private(set) var refreshError: String?
+    @Published var talkPath: [Recipient] = []
     let outbox = Outbox()
 
     private var apnsToken: String?
@@ -44,6 +46,8 @@ final class AppModel: ObservableObject {
 
     func leave() {
         AccountStore.delete()
+        ContactsCache.clear()
+        WidgetCenter.shared.invalidateConfigurationRecommendations()
         outbox.removeAll()
         account = nil
         contacts = nil
@@ -63,14 +67,24 @@ final class AppModel: ObservableObject {
     func refresh() async {
         guard let api else { return }
         do {
-            async let contacts = api.contacts()
-            async let clips = api.clips()
-            self.contacts = try await contacts
-            self.clips = try await clips
+            async let fetchedContacts = api.contacts()
+            async let fetchedClips = api.clips()
+            let contacts = try await fetchedContacts
+            self.contacts = contacts
+            self.clips = try await fetchedClips
+            let recipients = contacts.groups.map { Recipient.group(id: $0.id, name: $0.name) }
+                + contacts.users.map { Recipient.person(id: $0.id, name: $0.displayName) }
+            if ContactsCache.save(recipients) {
+                WidgetCenter.shared.invalidateConfigurationRecommendations()
+            }
             refreshError = nil
         } catch {
             refreshError = error.localizedDescription
         }
+    }
+
+    func talk(to recipient: Recipient) {
+        talkPath = [recipient]
     }
 
     func markPlayed(_ clipID: String) async {

@@ -4,5 +4,16 @@
 <dict>
 	<key>ZurufDefaultServer</key>
 	<string>$(ZURUF_DEFAULT_SERVER)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>$(ZURUF_BUNDLE_ID)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>zuruf</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
