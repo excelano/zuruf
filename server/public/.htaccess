@@ -3,5 +3,8 @@ RewriteEngine On
 # LiteSpeed and Apache drop the Authorization header before PHP sees it unless it is passed through.
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+RewriteRule ^$ home.html [L]
+RewriteRule ^privacy$ privacy.html [L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [L]
