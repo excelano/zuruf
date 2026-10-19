@@ -1,0 +1,10 @@
+# What this release tells the App Store it changed. The version is checked
+# against the release being cut, so notes left from last time stop the release
+# rather than reaching the listing.
+
+version = "0.2.0"
+
+[locales."en-us"]
+whats-new = """
+The first release of Zuruf: a walkie-talkie for Apple Watch, for small groups on their own server.
+"""

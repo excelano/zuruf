@@ -1,0 +1,56 @@
+# The copy the App Store listing is filled in from. Every line is a claim about
+# the code, so it lives here, is reviewed and committed like anything else, and
+# ship-appstore pushes it on every release. Edit here; do not edit the listing
+# in a browser.
+#
+# Limits, counted in characters: apple.name and apple.subtitle 30,
+# apple.promotional-text 170, apple.keywords 100 including the commas,
+# description 4,000, apple-review-notes 4,000.
+#
+# The reviewer's invite code is on the App Store Connect record's sign-in
+# fields, never here: this repository is public.
+
+apple-review-notes = """
+Zuruf is a walkie-talkie for Apple Watch, for a small private group of people who know each other. It is watch-only; the iOS app in this package is an empty container that App Store Connect requires, and everything is reviewed on the watch. We are requesting unlisted distribution for this app through Apple's unlisted app request form, and the version is set to release manually.
+
+Zuruf is invite-only. Each group runs its own Zuruf server, and an account comes from an invite code that the server's operator hands out. For review we run a separate demo server whose only contact is Echo, a built-in contact that plays back whatever you send it. The server address is in the User Name sign-in field and the invite code is in the Password field. The code can be used any number of times.
+
+HOW TO SIGN IN
+1. Open Zuruf on the Apple Watch. The first screen asks for a server, an invite code and your name.
+2. Replace the server shown (zuruf.excelano.com, our group's private server) with the address from the User Name field: demo.zuruf.excelano.com
+3. Enter the invite code from the Password field, type any name, and tap Join.
+4. Allow notifications when asked. Notifications are how a message arrives.
+
+WHAT TO TRY
+1. Tap Echo. Hold the large talk button, say something, and let go to send. The first time, the watch asks for the microphone, which is used only while the button is held.
+2. A few seconds later Echo sends the recording back. Its notification plays the message as soon as it appears, with no tap needed. On silent, the notification shows a Play button instead.
+3. Open Inbox to replay the message, reply to it, and see under Sent that Echo has played yours.
+4. Settings has Play automatically, and Delete account, which removes the account and every message sent by or to it from the server.
+
+A complication shows the person or group you last talked to, and tapping it opens the talk button for them.
+
+PRIVACY
+Messages go from the watch to the group's server over HTTPS and are downloaded from there by the recipients; Apple's push service carries only a short alert with the sender's name. The server stores each person's display name, a hashed token for their watch, its push token, and the recordings with who sent them and who played them. Recordings are deleted after seven days. Because every account comes from an invite, there are no strangers on a Zuruf server. The person who runs the server decides who joins and can remove any account and its messages. There is no analytics, advertising or tracking code. The privacy policy is at https://zuruf.excelano.com/privacy and the complete source of the app and the server is public at https://github.com/excelano/zuruf.
+
+Contact for review questions: David M. Anderson, david.anderson@excelano.com.
+"""
+
+[locales."en-us"]
+website = "https://zuruf.excelano.com/"
+support = "https://zuruf.excelano.com/"
+privacy = "https://zuruf.excelano.com/privacy"
+description = """
+Zuruf turns your Apple Watch into a walkie-talkie for a small group of people. Hold the button, say something, and let go. A moment later it plays on the other person's wrist, over Wi-Fi or cellular, wherever they are. There is no call to answer and nothing to tap: the message plays as its notification arrives. On silent, a Play button waits for you instead, and you can play any message again from the inbox.
+
+Talk to one person or to a whole group. Reply to a message from the inbox, and see who in the group has heard what you sent. Put Zuruf on your watch face, and the complication shows the last person or group you talked to, one tap away from the talk button. If you are out of range when you let go, the message waits on your watch and sends as soon as it can.
+
+Zuruf is invite-only. Each group runs its own small Zuruf server, and you join with an invite code from the person who runs it. Without an invitation the app has nobody to talk to. Messages pass through nothing but your group's server and Apple's push service, which carries only a short alert, and the server deletes them after seven days. There are no ads, no analytics and no tracking.
+
+Zuruf needs no iPhone app. It is open source under the MIT license, and the source for the app and the server is on GitHub for anyone who wants to run their own.
+"""
+
+[locales."en-us".apple]
+name = "Zuruf — Walkie-Talkie"
+subtitle = "Push to talk for small groups"
+promotional-text = "Hold the button, say it, let go. It plays on their wrist a moment later, over Wi-Fi or cellular, with no tap and no iPhone app. Invite-only, on your group's own server."
+keywords = "voice,messages,ptt,intercom,radio,two-way,group,wrist,audio,talk,crew,team,private,open source"
