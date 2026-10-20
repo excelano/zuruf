@@ -50,7 +50,7 @@ Zuruf needs no iPhone app. It is open source under the MIT license, and the sour
 """
 
 [locales."en-us".apple]
-name = "Zuruf — Walkie-Talkie"
+name = "Zuruf"
 subtitle = "Push to talk for small groups"
 promotional-text = "Hold the button, say it, let go. It plays on their wrist a moment later, over Wi-Fi or cellular, with no tap and no iPhone app. Invite-only, on your group's own server."
 keywords = "voice,messages,ptt,intercom,radio,two-way,group,wrist,audio,talk,crew,team,private,open source"
