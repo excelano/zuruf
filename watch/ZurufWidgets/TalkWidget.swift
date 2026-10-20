@@ -48,6 +48,7 @@ struct TalkWidget: Widget {
 struct TalkWidgetView: View {
     let entry: TalkEntry
     @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetRenderingMode) private var renderingMode
 
     var body: some View {
         content
@@ -72,10 +73,19 @@ struct TalkWidgetView: View {
             Label(entry.recipient.map { "Talk to \($0.name)" } ?? "Zuruf", systemImage: "mic.fill")
         default:
             ZStack {
-                AccessoryWidgetBackground()
+                if renderingMode == .fullColor {
+                    Circle().fill(Self.yellow)
+                } else {
+                    AccessoryWidgetBackground()
+                }
                 Image(systemName: "mic.fill")
                     .font(.title3)
+                    .foregroundStyle(renderingMode == .fullColor ? Self.ink : .primary)
             }
         }
     }
+
+    // The app icon's colors.
+    private static let yellow = Color(red: 0xFA / 255, green: 0xCC / 255, blue: 0x15 / 255)
+    private static let ink = Color(red: 0x18 / 255, green: 0x18 / 255, blue: 0x1B / 255)
 }
