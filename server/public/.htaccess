@@ -5,6 +5,17 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 RewriteRule ^$ home.html [L]
 RewriteRule ^privacy$ privacy.html [L]
+RewriteRule ^admin$ admin.html [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [L]
+
+# The admin page runs only its own script and style, talks only to this server, and is never framed or cached.
+<IfModule mod_headers.c>
+<FilesMatch "^admin\.(html|js|css)$">
+Header set Cache-Control "no-store"
+Header set Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'"
+Header set Referrer-Policy "no-referrer"
+Header set X-Frame-Options "DENY"
+</FilesMatch>
+</IfModule>

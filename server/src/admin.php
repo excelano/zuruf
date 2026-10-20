@@ -41,6 +41,23 @@ function adminCreateGroup(array $body): never {
     respond(201, ['id' => $id]);
 }
 
+function adminRenameGroup(string $groupId, array $body): never {
+    $name = textField($body, 'name', 40);
+    if (query('UPDATE groups SET name = ? WHERE id = ?', [$name, $groupId])->rowCount() === 0) {
+        fail(404, 'not_found');
+    }
+    respond(200, ['id' => $groupId, 'name' => $name]);
+}
+
+function adminDeleteGroup(string $groupId): never {
+    $clipIds = query('SELECT id FROM clips WHERE group_id = ?', [$groupId])->fetchAll(PDO::FETCH_COLUMN);
+    if (query('DELETE FROM groups WHERE id = ?', [$groupId])->rowCount() === 0) {
+        fail(404, 'not_found');
+    }
+    deleteClipFiles($clipIds);
+    respond(200, ['deleted' => $groupId]);
+}
+
 function adminAddMember(string $groupId, array $body): never {
     $userId = idField($body, 'user_id');
     if (!query('SELECT 1 FROM groups WHERE id = ?', [$groupId])->fetch()

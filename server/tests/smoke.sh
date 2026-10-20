@@ -188,6 +188,21 @@ check "deleted account leaves the contact list" "[.users[].id] | index(\"$carol_
 
 call DELETE "/v1/admin/groups/$group/members/$bob_id" $admin
 expect 200 "remove group member"
+json PATCH "/v1/admin/groups/$group" $admin '{"name": "Crew"}'
+expect 200 "rename group"
+call GET /v1/contacts $alice
+check "the group has its new name" '.groups[0].name == "Crew"'
+json PATCH "/v1/admin/groups/$group" $admin '{"name": ""}'
+expect 422 "group name required"
+json PATCH "/v1/admin/groups/$(printf '0%.0s' {1..32})" $admin '{"name": "Nobody"}'
+expect 404 "rename unknown group"
+call DELETE "/v1/admin/groups/$group" $admin
+expect 200 "delete group"
+[[ ! -e "$work/data/clips/$group_clip.m4a" ]] && echo "ok   deleting a group deletes its clip files" || { echo "FAIL group clip file remains"; failures=$((failures + 1)); }
+call GET /v1/contacts $alice
+check "the deleted group leaves the contact list" '.groups == []'
+call DELETE "/v1/admin/groups/$group" $admin
+expect 404 "delete unknown group"
 call DELETE "/v1/admin/users/$bob_id" $admin
 expect 200 "delete user"
 call GET /v1/contacts $bob

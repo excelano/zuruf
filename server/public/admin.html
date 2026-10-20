@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Zuruf Admin</title>
+<link rel="stylesheet" href="/admin.css">
+<script src="/admin.js" defer></script>
+</head>
+<body>
+<main>
+<header>
+  <h1>Zuruf Admin</h1>
+  <button id="sign-out" class="quiet" type="button" hidden>Sign out</button>
+</header>
+
+<section id="sign-in" hidden>
+  <p>Sign in with the server's admin token, the <code>ADMIN_TOKEN</code> in its <code>config.php</code>.</p>
+  <form id="sign-in-form">
+    <label for="token">Admin token</label>
+    <input id="token" type="password" autocomplete="current-password" spellcheck="false" required>
+    <label class="check"><input id="remember" type="checkbox"> Remember on this device</label>
+    <button type="submit">Sign in</button>
+  </form>
+</section>
+
+<div id="console" hidden>
+  <p id="message" role="status" hidden></p>
+
+  <section>
+    <h2>Invite codes</h2>
+    <p class="hint">Each code lets one person join. Codes can't be looked up again later, so give a code out when you make it.</p>
+    <form id="invite-form" class="row">
+      <label for="invite-days">Expires after</label>
+      <select id="invite-days">
+        <option value="7">7 days</option>
+        <option value="14">14 days</option>
+        <option value="30">30 days</option>
+      </select>
+      <button type="submit">New code</button>
+    </form>
+    <ul id="invites" class="invites"></ul>
+  </section>
+
+  <section>
+    <h2>People</h2>
+    <ul id="people" class="list"></ul>
+  </section>
+
+  <section>
+    <h2>Groups</h2>
+    <form id="group-form" class="row">
+      <label for="group-name">New group</label>
+      <input id="group-name" maxlength="40" placeholder="Name" required>
+      <button type="submit">Create</button>
+    </form>
+    <div id="groups"></div>
+  </section>
+</div>
+</main>
+</body>
+</html>

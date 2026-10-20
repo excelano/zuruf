@@ -38,6 +38,8 @@ $routes = [
     ['GET', '/v1/admin/users', function () { requireAdmin(); adminListUsers(); }],
     ['DELETE', "/v1/admin/users/$id", function ($userId) { requireAdmin(); adminDeleteUser($userId); }],
     ['POST', '/v1/admin/groups', function () { requireAdmin(); adminCreateGroup(jsonBody()); }],
+    ['PATCH', "/v1/admin/groups/$id", function ($groupId) { requireAdmin(); adminRenameGroup($groupId, jsonBody()); }],
+    ['DELETE', "/v1/admin/groups/$id", function ($groupId) { requireAdmin(); adminDeleteGroup($groupId); }],
     ['POST', "/v1/admin/groups/$id/members", function ($groupId) { requireAdmin(); adminAddMember($groupId, jsonBody()); }],
     ['DELETE', "/v1/admin/groups/$id/members/$id", function ($groupId, $userId) {
         requireAdmin();

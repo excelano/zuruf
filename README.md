@@ -45,14 +45,16 @@ Point a hostname's document root at `server/public/` and upload the `server/` di
 php /path/to/server/cron.php
 ```
 
-The admin token manages the server through its `/v1/admin` endpoints. Create an invite for each person and give them the code:
+The server is managed from its admin page, at `/admin` on the server's own address, in any browser on a computer or a phone. It signs in with the admin token and makes invite codes, lists who has joined and when each watch last opened the app, creates, renames and deletes groups, adds and removes members, and deletes people along with every message sent by or to them. An invite code is shown once, when it is made, because the server keeps only its hash. Changes reach each watch the next time Zuruf refreshes its contacts, such as when it is opened.
+
+The page is a client of the server's `/v1/admin` API, which takes the same token as a bearer token and can be scripted directly:
 
 ```bash
 curl -s -X POST https://zuruf.example.com/v1/admin/invites \
   -H "Authorization: Bearer $ADMIN_TOKEN" -H 'Content-Type: application/json' -d '{}'
 ```
 
-Groups are created and filled the same way, from `/v1/admin/groups` and `/v1/admin/groups/{id}/members`, and `/v1/admin/users` lists who has joined. The built-in Echo contact sends back any clip it receives, which makes it the quickest check that recording, upload, push and playback all work. Set `ECHO_BOT_ENABLED` to false to hide it.
+`GET /v1/admin/users` returns everyone and every group, `/v1/admin/groups` creates a group, `PATCH` and `DELETE` on `/v1/admin/groups/{id}` rename and delete one, `/v1/admin/groups/{id}/members` adds a member, and `DELETE /v1/admin/users/{id}` removes a person. The built-in Echo contact sends back any clip it receives, which makes it the quickest check that recording, upload, push and playback all work. Set `ECHO_BOT_ENABLED` to false to hide it.
 
 ## Testing
 
