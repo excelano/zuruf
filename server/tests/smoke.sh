@@ -69,6 +69,7 @@ json POST /v1/invites/redeem "" "{\"code\": \"${alice_code,,}\", \"display_name\
 expect 201 "redeem invite, code case and dash ignored"
 alice=$(jq -r .token <<< "$body")
 alice_id=$(jq -r .user_id <<< "$body")
+alice_watch=$(jq -r .device_id <<< "$body")
 check "redeem returns a server id" '.server_id | test("^[0-9a-f]{32}$")'
 
 json POST /v1/invites/redeem "" "{\"code\": \"$alice_code\", \"display_name\": \"Mallory\"}"
@@ -89,6 +90,7 @@ expect 422 "display name required"
 json POST /v1/invites/redeem "" "{\"code\": \"$bob_code\", \"display_name\": \"Bob\"}"
 bob=$(jq -r .token <<< "$body")
 bob_id=$(jq -r .user_id <<< "$body")
+bob_device=$(jq -r .device_id <<< "$body")
 
 call GET /v1/contacts ""
 expect 401 "contacts require a token"
@@ -105,6 +107,20 @@ json POST /v1/devices $alice '{"apns_token": "xyz", "apns_env": "sandbox"}'
 expect 422 "reject malformed APNs token"
 json POST /v1/devices $alice "{\"apns_token\": \"$(printf 'ab%.0s' {1..32})\", \"apns_env\": \"staging\"}"
 expect 422 "reject unknown APNs environment"
+json POST /v1/devices $alice "{\"apns_token\": \"$(printf 'ab%.0s' {1..32})\", \"apns_env\": \"sandbox\", \"platform\": \"android\"}"
+expect 422 "reject unknown platform"
+
+call POST /v1/devices/link ""
+expect 401 "linking requires a token"
+call POST /v1/devices/link $alice
+expect 201 "link a phone to Alice's account"
+check "the linked device belongs to Alice" ".user_id == \"$alice_id\" and .device_id != \"$alice_watch\""
+alice_phone=$(jq -r .token <<< "$body")
+alice_phone_device=$(jq -r .device_id <<< "$body")
+json POST /v1/devices $alice_phone "{\"apns_token\": \"$(printf 'cd%.0s' {1..32})\", \"apns_env\": \"sandbox\", \"platform\": \"ios\"}"
+expect 200 "register the phone's APNs token"
+json POST /v1/devices $bob "{\"apns_token\": \"$(printf 'ef%.0s' {1..32})\", \"apns_env\": \"sandbox\", \"platform\": \"ios\"}"
+expect 200 "register a phone for Bob, who has no watch"
 
 call GET /v1/contacts $alice
 expect 200 "list contacts"
@@ -176,6 +192,16 @@ expect 201 "uploads under the rate limit"
 for _ in 1 2 3 4; do call POST /v1/clips $bob -F "to_user=$alice_id" -F "audio=@$work/short.m4a"; done
 call POST /v1/clips $bob -F "to_user=$alice_id" -F "audio=@$work/short.m4a"
 expect 429 "eleventh upload in a minute is rate limited"
+
+# pushTargets() run directly, since the test server has no APNs keys to push with.
+body=$(php -r 'require getenv("ZURUF_CONFIG"); require $argv[1] . "/src/db.php"; require $argv[1] . "/src/apns.php";
+    echo json_encode(array_column(array_map(fn($t) => [$t[0]["id"], $t[1]], pushTargets(array_slice($argv, 2))), 1, 0));' \
+    "$server" "$alice_id" "$bob_id")
+check "Alice's watch gets the alert" ".[\"$alice_watch\"] == \"alert\""
+check "Alice's phone gets only a background push" ".[\"$alice_phone_device\"] == \"background\""
+check "Bob, with only a phone, gets the alert there" ".[\"$bob_device\"] == \"alert\""
+call GET /v1/clips $alice_phone
+check "the linked phone sees Alice's inbox" '.received | length > 0'
 
 sqlite3 "$work/data/zuruf.db" "UPDATE clips SET expires_at = 0 WHERE id = '$clip'"
 call GET "/v1/clips/$clip/audio" $bob

@@ -70,21 +70,43 @@ function redeemInvite(array $body): never {
     ]);
 }
 
+// Gives the paired watch or phone its own device under the same account, from
+// the credentials the other one passed it.
+function linkDevice(array $device): never {
+    $deviceId = randomId();
+    $token = bin2hex(random_bytes(32));
+    $now = time();
+    query(
+        'INSERT INTO devices (id, user_id, api_token_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+        [$deviceId, $device['user_id'], tokenHash($token), $now, $now]
+    );
+    respond(201, [
+        'user_id' => $device['user_id'],
+        'device_id' => $deviceId,
+        'token' => $token,
+        'server_id' => serverId(),
+    ]);
+}
+
 function updateDevice(array $device, array $body): never {
     $apnsToken = strtolower((string)($body['apns_token'] ?? ''));
     $apnsEnv = (string)($body['apns_env'] ?? '');
+    $platform = (string)($body['platform'] ?? 'watchos');
     if (!preg_match('/^[0-9a-f]{64,200}$/', $apnsToken)) {
         fail(422, 'invalid_apns_token');
     }
     if (!in_array($apnsEnv, ['sandbox', 'production'], true)) {
         fail(422, 'invalid_apns_env');
     }
+    if (!in_array($platform, ['watchos', 'ios'], true)) {
+        fail(422, 'invalid_platform');
+    }
 
     // A watch that redeems a second invite keeps its APNs token; only the newest device row should receive pushes.
     query('UPDATE devices SET apns_token = NULL WHERE apns_token = ? AND id <> ?', [$apnsToken, $device['id']]);
     query(
-        'UPDATE devices SET apns_token = ?, apns_env = ?, updated_at = ? WHERE id = ?',
-        [$apnsToken, $apnsEnv, time(), $device['id']]
+        'UPDATE devices SET apns_token = ?, apns_env = ?, platform = ?, updated_at = ? WHERE id = ?',
+        [$apnsToken, $apnsEnv, $platform, time(), $device['id']]
     );
     respond(200, ['device_id' => $device['id']]);
 }

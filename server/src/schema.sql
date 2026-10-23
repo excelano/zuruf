@@ -20,6 +20,7 @@ CREATE TABLE devices (
     api_token_hash TEXT NOT NULL UNIQUE,
     apns_token     TEXT,
     apns_env       TEXT CHECK (apns_env IN ('sandbox', 'production')),
+    platform       TEXT NOT NULL DEFAULT 'watchos' CHECK (platform IN ('watchos', 'ios')),
     created_at     INTEGER NOT NULL,
     updated_at     INTEGER NOT NULL
 );

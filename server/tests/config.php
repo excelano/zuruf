@@ -5,10 +5,15 @@
 
 define('ADMIN_TOKEN', 'test-admin-token');
 define('APNS_TEAM_ID', 'TEAMID');
-define('APNS_TOPIC', 'com.example.zuruf.watchkitapp');
-define('APNS_KEYS', [
-    'sandbox' => ['id' => '', 'path' => ''],
-    'production' => ['id' => '', 'path' => ''],
+define('APNS_APPS', [
+    'watchos' => [
+        'topic' => 'com.example.zuruf.watchkitapp',
+        'keys' => ['sandbox' => ['id' => '', 'path' => ''], 'production' => ['id' => '', 'path' => '']],
+    ],
+    'ios' => [
+        'topic' => 'com.example.zuruf',
+        'keys' => ['sandbox' => ['id' => '', 'path' => ''], 'production' => ['id' => '', 'path' => '']],
+    ],
 ]);
 define('DATA_DIR', getenv('ZURUF_DATA_DIR'));
 define('MAX_CLIP_SECONDS', 60);

@@ -14,6 +14,7 @@ const MIGRATIONS = [
         deleted_at INTEGER NOT NULL,
         PRIMARY KEY (clip_id, user_id)
     )',
+    "ALTER TABLE devices ADD COLUMN platform TEXT NOT NULL DEFAULT 'watchos' CHECK (platform IN ('watchos', 'ios'))",
 ];
 
 function getDb(): PDO {

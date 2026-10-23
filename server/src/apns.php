@@ -32,37 +32,36 @@ function derToJose(string $der): string {
     return $parts;
 }
 
-function apnsJwt(string $env): ?string {
-    $key = APNS_KEYS[$env] ?? null;
-    if ($key === null || $key['id'] === '') {
-        return null;
-    }
-    $cached = json_decode(getSetting('apns_jwt_' . $env) ?? '', true);
-    if (is_array($cached) && $cached['key_id'] === $key['id'] && time() - $cached['issued_at'] < APNS_JWT_LIFETIME) {
+function apnsJwt(array $key): ?string {
+    $cached = json_decode(getSetting('apns_jwt_' . $key['id']) ?? '', true);
+    if (is_array($cached) && time() - $cached['issued_at'] < APNS_JWT_LIFETIME) {
         return $cached['jwt'];
     }
 
     $privateKey = openssl_pkey_get_private('file://' . $key['path']);
     if ($privateKey === false) {
-        error_log("zuruf: cannot read APNs $env key at {$key['path']}");
+        error_log("zuruf: cannot read APNs key {$key['id']} at {$key['path']}");
         return null;
     }
     $issuedAt = time();
     $input = base64Url(json_encode(['alg' => 'ES256', 'kid' => $key['id']]))
         . '.' . base64Url(json_encode(['iss' => APNS_TEAM_ID, 'iat' => $issuedAt]));
     if (!openssl_sign($input, $signature, $privateKey, OPENSSL_ALGO_SHA256)) {
-        error_log("zuruf: signing the APNs $env token failed");
+        error_log("zuruf: signing the APNs token for key {$key['id']} failed");
         return null;
     }
     $jwt = $input . '.' . base64Url(derToJose($signature));
-    setSetting('apns_jwt_' . $env, json_encode(['jwt' => $jwt, 'key_id' => $key['id'], 'issued_at' => $issuedAt]));
+    setSetting('apns_jwt_' . $key['id'], json_encode(['jwt' => $jwt, 'issued_at' => $issuedAt]));
     return $jwt;
 }
 
-function apnsSend(CurlHandle $handle, array $device, array $payload, int $expiresAt): void {
-    $jwt = apnsJwt($device['apns_env']);
+// $pushType is 'alert' or 'background'.
+function apnsSend(CurlHandle $handle, array $device, string $pushType, array $payload, int $expiresAt): void {
+    $app = APNS_APPS[$device['platform']];
+    $key = $app['keys'][$device['apns_env']];
+    $jwt = $key['id'] === '' ? null : apnsJwt($key);
     if ($jwt === null) {
-        error_log("zuruf: no APNs {$device['apns_env']} key configured; push to device {$device['id']} skipped");
+        error_log("zuruf: no APNs {$device['platform']} {$device['apns_env']} key; $pushType push to device {$device['id']} skipped");
         return;
     }
     curl_setopt_array($handle, [
@@ -72,9 +71,9 @@ function apnsSend(CurlHandle $handle, array $device, array $payload, int $expire
         CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
         CURLOPT_HTTPHEADER => [
             'authorization: bearer ' . $jwt,
-            'apns-topic: ' . APNS_TOPIC,
-            'apns-push-type: alert',
-            'apns-priority: 10',
+            'apns-topic: ' . $app['topic'],
+            'apns-push-type: ' . $pushType,
+            'apns-priority: ' . ($pushType === 'alert' ? 10 : 5),
             'apns-expiration: ' . $expiresAt,
         ],
         CURLOPT_RETURNTRANSFER => true,
@@ -105,7 +104,7 @@ function pushClip(array $clip): void {
     $sender = query('SELECT display_name FROM users WHERE id = ?', [$clip['sender_id']])->fetchColumn();
     $groupName = $clip['group_id'] === null ? null
         : query('SELECT name FROM groups WHERE id = ?', [$clip['group_id']])->fetchColumn();
-    $payload = [
+    $alert = [
         'aps' => [
             'alert' => [
                 'title' => $groupName ?? $sender,
@@ -119,15 +118,32 @@ function pushClip(array $clip): void {
         'clip_id' => $clip['id'],
         'server_id' => serverId(),
     ];
+    $background = ['aps' => ['content-available' => 1], 'clip_id' => $clip['id'], 'server_id' => serverId()];
 
-    $placeholders = implode(',', array_fill(0, count($recipients), '?'));
-    $devices = query(
-        "SELECT id, apns_token, apns_env FROM devices WHERE apns_token IS NOT NULL AND user_id IN ($placeholders)",
-        $recipients
-    )->fetchAll();
     $handle = curl_init();
-    foreach ($devices as $device) {
-        apnsSend($handle, $device, $payload, (int)$clip['expires_at']);
+    foreach (pushTargets($recipients) as [$device, $pushType]) {
+        apnsSend($handle, $device, $pushType, $pushType === 'alert' ? $alert : $background, (int)$clip['expires_at']);
     }
     curl_close($handle);
+}
+
+// Someone with a watch is alerted only there. Their phone gets a background
+// push, so it can fetch and transcribe the clip without a second alert.
+function pushTargets(array $userIds): array {
+    $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+    $devices = query(
+        "SELECT id, user_id, platform, apns_token, apns_env FROM devices
+         WHERE apns_token IS NOT NULL AND user_id IN ($placeholders)",
+        $userIds
+    )->fetchAll();
+    $hasWatch = [];
+    foreach ($devices as $device) {
+        if ($device['platform'] === 'watchos') {
+            $hasWatch[$device['user_id']] = true;
+        }
+    }
+    return array_map(
+        fn($device) => [$device, $device['platform'] === 'ios' && isset($hasWatch[$device['user_id']]) ? 'background' : 'alert'],
+        $devices
+    );
 }

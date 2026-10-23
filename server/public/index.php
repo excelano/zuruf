@@ -28,6 +28,7 @@ $id = '([0-9a-f]{32})';
 $routes = [
     ['POST', '/v1/invites/redeem', fn() => redeemInvite(jsonBody())],
     ['POST', '/v1/devices', fn() => updateDevice(requireDevice(), jsonBody())],
+    ['POST', '/v1/devices/link', fn() => linkDevice(requireDevice())],
     ['DELETE', '/v1/account', fn() => deleteAccount(requireDevice())],
     ['GET', '/v1/contacts', fn() => listContacts(requireDevice())],
     ['POST', '/v1/clips', fn() => createClip(requireDevice())],

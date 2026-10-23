@@ -9,16 +9,29 @@
 // Long random string that authorizes the /v1/admin endpoints.
 define('ADMIN_TOKEN', '');
 
-// Apple Developer team id and the watch app's bundle id (the APNs topic).
+// Apple Developer team id.
 define('APNS_TEAM_ID', '');
-define('APNS_TOPIC', 'com.example.zuruf.watchkitapp');
 
-// One topic-specific APNs key per environment. Development builds installed
-// from Xcode register sandbox tokens; TestFlight and App Store builds register
-// production tokens. Leave an environment's id empty if you have no key for it.
-define('APNS_KEYS', [
-    'sandbox' => ['id' => '', 'path' => __DIR__ . '/keys/AuthKey_SANDBOX.p8'],
-    'production' => ['id' => '', 'path' => __DIR__ . '/keys/AuthKey_PRODUCTION.p8'],
+// Each app's bundle id (its APNs topic) and its APNs keys. Development builds
+// installed from Xcode register sandbox tokens; TestFlight and App Store builds
+// register production tokens. A topic-specific key covers one app and one
+// environment; a team key covers them all, so it goes in every slot. Leave an
+// id empty where you have no key.
+define('APNS_APPS', [
+    'watchos' => [
+        'topic' => 'com.example.zuruf.watchkitapp',
+        'keys' => [
+            'sandbox' => ['id' => '', 'path' => __DIR__ . '/keys/AuthKey_WATCH_SANDBOX.p8'],
+            'production' => ['id' => '', 'path' => __DIR__ . '/keys/AuthKey_WATCH_PRODUCTION.p8'],
+        ],
+    ],
+    'ios' => [
+        'topic' => 'com.example.zuruf',
+        'keys' => [
+            'sandbox' => ['id' => '', 'path' => __DIR__ . '/keys/AuthKey_PHONE_SANDBOX.p8'],
+            'production' => ['id' => '', 'path' => __DIR__ . '/keys/AuthKey_PHONE_PRODUCTION.p8'],
+        ],
+    ],
 ]);
 
 // The database and clip files. Must not be under public/.
