@@ -34,6 +34,7 @@ $routes = [
     ['GET', '/v1/clips', fn() => listClips(requireDevice())],
     ['GET', "/v1/clips/$id/audio", fn($clipId) => streamClipAudio(requireDevice(), $clipId)],
     ['POST', "/v1/clips/$id/played", fn($clipId) => markPlayed(requireDevice(), $clipId)],
+    ['DELETE', "/v1/clips/$id", fn($clipId) => deleteReceivedClip(requireDevice(), $clipId)],
     ['POST', '/v1/admin/invites', function () { requireAdmin(); adminCreateInvite(jsonBody()); }],
     ['GET', '/v1/admin/users', function () { requireAdmin(); adminListUsers(); }],
     ['DELETE', "/v1/admin/users/$id", function ($userId) { requireAdmin(); adminDeleteUser($userId); }],

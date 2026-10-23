@@ -111,6 +111,12 @@ final class AppModel: ObservableObject {
         await refresh()
     }
 
+    func deleteClip(_ clipID: String) async {
+        clips?.received.removeAll { $0.id == clipID }
+        try? await api?.deleteClip(clipID: clipID)
+        await refresh()
+    }
+
     func recipientName(of clip: SentClip) -> String {
         if let toGroup = clip.toGroup {
             return contacts?.name(ofGroup: toGroup) ?? "Group"

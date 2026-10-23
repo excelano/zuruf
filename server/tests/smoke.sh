@@ -138,6 +138,18 @@ expect 200 "mark played"
 call GET /v1/clips $alice
 check "Alice sees Bob's played receipt" ".sent[0].played_by[0].user_id == \"$bob_id\""
 
+call DELETE "/v1/clips/$clip" $alice
+expect 404 "sender cannot delete a sent clip"
+call DELETE "/v1/clips/$clip" $bob
+expect 200 "recipient deletes a clip"
+call GET /v1/clips $bob
+check "the deleted clip leaves Bob's inbox" ".received | all(.id != \"$clip\")"
+call GET "/v1/clips/$clip/audio" $bob
+expect 404 "deleted clip's audio is gone for Bob"
+[[ ! -e "$work/data/clips/$clip.m4a" ]] && echo "ok   the last recipient's delete removes the audio" || { echo "FAIL deleted clip's audio remains"; failures=$((failures + 1)); }
+call GET /v1/clips $alice
+check "Alice still sees the clip in Sent" ".sent | any(.id == \"$clip\")"
+
 json POST /v1/admin/groups $admin '{"name": "Family"}'
 expect 201 "create group"
 group=$(jq -r .id <<< "$body")

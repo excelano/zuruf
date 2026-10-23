@@ -68,3 +68,11 @@ CREATE TABLE clip_receipts (
     played_at INTEGER NOT NULL,
     PRIMARY KEY (clip_id, user_id)
 );
+
+-- A recipient who deleted a clip; its audio goes once every recipient has.
+CREATE TABLE clip_deletions (
+    clip_id    TEXT NOT NULL REFERENCES clips(id) ON DELETE CASCADE,
+    user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    deleted_at INTEGER NOT NULL,
+    PRIMARY KEY (clip_id, user_id)
+);

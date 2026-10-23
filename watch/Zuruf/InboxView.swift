@@ -19,6 +19,9 @@ struct InboxView: View {
                             ReceivedRow(clip: clip)
                         }
                         .swipeActions {
+                            Button("Delete", systemImage: "trash", role: .destructive) {
+                                Task { await model.deleteClip(clip.id) }
+                            }
                             if clip.playedAt == nil {
                                 Button("Mark as Read", systemImage: "envelope.open") {
                                     Task { await model.markPlayed(clip.id) }

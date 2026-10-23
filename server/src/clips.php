@@ -142,6 +142,7 @@ function listClips(array $device): never {
          LEFT JOIN clip_receipts r ON r.clip_id = c.id AND r.user_id = :me
          WHERE c.expires_at > :now AND c.sender_id <> :me
            AND (c.recipient_user_id = :me OR c.group_id IN (SELECT group_id FROM group_members WHERE user_id = :me))
+           AND NOT EXISTS (SELECT 1 FROM clip_deletions d WHERE d.clip_id = c.id AND d.user_id = :me)
          ORDER BY c.created_at DESC, c.rowid DESC LIMIT 100',
         ['me' => $me, 'now' => $now]
     )->fetchAll();
@@ -171,7 +172,9 @@ function listClips(array $device): never {
 
 function requireAudibleClip(array $device, string $id): array {
     $clip = findClip($id);
-    if ($clip === null || !in_array($device['user_id'], clipRecipientIds($clip), true)) {
+    if ($clip === null || !in_array($device['user_id'], clipRecipientIds($clip), true) || query(
+        'SELECT 1 FROM clip_deletions WHERE clip_id = ? AND user_id = ?', [$id, $device['user_id']]
+    )->fetch()) {
         fail(404, 'not_found');
     }
     return $clip;
@@ -200,6 +203,21 @@ function markPlayed(array $device, string $id): never {
         'SELECT played_at FROM clip_receipts WHERE clip_id = ? AND user_id = ?', [$clip['id'], $device['user_id']]
     )->fetchColumn();
     respond(200, ['played_at' => (int)$playedAt]);
+}
+
+// Removes the clip from this recipient's inbox. The sender keeps it in Sent
+// until it expires, but its audio is deleted once every recipient has deleted it.
+function deleteReceivedClip(array $device, string $id): never {
+    $clip = requireAudibleClip($device, $id);
+    query(
+        'INSERT INTO clip_deletions (clip_id, user_id, deleted_at) VALUES (?, ?, ?)',
+        [$clip['id'], $device['user_id'], time()]
+    );
+    $deletedBy = query('SELECT user_id FROM clip_deletions WHERE clip_id = ?', [$clip['id']])->fetchAll(PDO::FETCH_COLUMN);
+    if (array_diff(clipRecipientIds($clip), $deletedBy) === []) {
+        deleteClipFiles([$clip['id']]);
+    }
+    respond(200, ['deleted' => $clip['id']]);
 }
 
 function deleteClipFiles(array $ids): void {

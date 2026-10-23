@@ -98,6 +98,10 @@ struct ZurufAPI {
         _ = try await Self.data(for: request("v1/clips/\(clipID)/played", method: "POST"))
     }
 
+    func deleteClip(clipID: String) async throws {
+        _ = try await Self.data(for: request("v1/clips/\(clipID)", method: "DELETE"))
+    }
+
     func uploadClip(file: URL, to recipient: Recipient) async throws {
         let boundary = "zuruf-\(UUID().uuidString)"
         var request = request("v1/clips", method: "POST")

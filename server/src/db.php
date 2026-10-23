@@ -5,6 +5,17 @@
 
 declare(strict_types=1);
 
+// Each entry brings a database from the previous schema version to the next;
+// schema.sql always holds the latest schema whole, for a new database.
+const MIGRATIONS = [
+    'CREATE TABLE clip_deletions (
+        clip_id    TEXT NOT NULL REFERENCES clips(id) ON DELETE CASCADE,
+        user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        deleted_at INTEGER NOT NULL,
+        PRIMARY KEY (clip_id, user_id)
+    )',
+];
+
 function getDb(): PDO {
     static $db = null;
     if ($db !== null) {
@@ -23,9 +34,24 @@ function getDb(): PDO {
 
     if ($isNew) {
         $db->exec(file_get_contents(dirname(__DIR__) . '/src/schema.sql'));
+        $db->exec('PRAGMA user_version = ' . count(MIGRATIONS));
     }
+    migrate($db);
 
     return $db;
+}
+
+function migrate(PDO $db): void {
+    if ((int)$db->query('PRAGMA user_version')->fetchColumn() === count(MIGRATIONS)) {
+        return;
+    }
+    $db->exec('BEGIN IMMEDIATE');
+    $version = (int)$db->query('PRAGMA user_version')->fetchColumn();
+    foreach (array_slice(MIGRATIONS, $version) as $sql) {
+        $db->exec($sql);
+    }
+    $db->exec('PRAGMA user_version = ' . count(MIGRATIONS));
+    $db->exec('COMMIT');
 }
 
 function query(string $sql, array $params = []): PDOStatement {
