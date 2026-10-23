@@ -19,7 +19,7 @@ SIGNING IN
 Zuruf opens on a join screen with three fields. Change Server from zuruf.excelano.com, our group's server, to demo.zuruf.excelano.com. Enter the invite code and any display name, tap Join, and allow notifications, since a clip arrives as a notification.
 
 A ROUND TRIP WITH ECHO
-Tap Echo for the talk screen. Hold the yellow button while speaking and release it to send. The microphone permission is requested on the first hold, and the microphone records only while the button is held. Echo's reply arrives within a few seconds and plays from its notification by itself, without a tap; with the watch on silent, the notification offers a Play button instead. Inbox keeps the clip to replay or answer, and its Sent list shows that Echo played yours.
+Tap Echo for the talk screen. Hold the yellow button while speaking and release it to send. The microphone permission is requested on the first hold, and the microphone records only while the button is held. Echo's reply arrives within a few seconds and plays from its notification by itself, without a tap; with the watch on silent, the notification offers a Play button instead. Inbox keeps the clip to replay or answer, and its Sent list shows that Echo played yours. Swiping a received clip in Inbox marks it as read or deletes it.
 
 SETTINGS AND THE WATCH FACE
 Settings can turn automatic playback off, and holds Delete account, which erases the account and every clip to or from it on the server. The complication shows the last person or group you talked to and opens the talk screen for them.
