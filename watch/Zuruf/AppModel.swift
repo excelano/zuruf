@@ -102,7 +102,11 @@ final class AppModel: ObservableObject {
         talkPath = [recipient]
     }
 
+    // Clears the unplayed dot at once; the refresh restores it if the server refused.
     func markPlayed(_ clipID: String) async {
+        if let index = clips?.received.firstIndex(where: { $0.id == clipID && $0.playedAt == nil }) {
+            clips?.received[index].playedAt = Date()
+        }
         try? await api?.markPlayed(clipID: clipID)
         await refresh()
     }

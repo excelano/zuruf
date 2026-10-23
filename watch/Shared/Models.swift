@@ -49,7 +49,7 @@ struct ReceivedClip: Decodable, Identifiable, Hashable {
     let createdAt: Date
     let senderName: String
     let groupName: String?
-    let playedAt: Date?
+    var playedAt: Date?
 
     var replyRecipient: Recipient {
         if let toGroup, let groupName {
@@ -74,6 +74,6 @@ struct SentClip: Decodable, Identifiable, Hashable {
 }
 
 struct ClipList: Decodable {
-    let received: [ReceivedClip]
+    var received: [ReceivedClip]
     let sent: [SentClip]
 }

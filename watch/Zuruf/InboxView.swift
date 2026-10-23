@@ -18,6 +18,14 @@ struct InboxView: View {
                         } label: {
                             ReceivedRow(clip: clip)
                         }
+                        .swipeActions {
+                            if clip.playedAt == nil {
+                                Button("Mark as Read", systemImage: "envelope.open") {
+                                    Task { await model.markPlayed(clip.id) }
+                                }
+                                .tint(.accentColor)
+                            }
+                        }
                     }
                 }
             }
