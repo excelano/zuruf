@@ -95,6 +95,7 @@ private struct SentRow: View {
 
 struct ClipView: View {
     let clip: ReceivedClip
+    @EnvironmentObject private var model: AppModel
     @ObservedObject private var player = ClipPlayer.shared
 
     var body: some View {
@@ -108,7 +109,12 @@ struct ClipView: View {
             } label: {
                 Label(player.loadingClipID == clip.id ? "Loading…" : "Play", systemImage: "play.fill")
             }
-            NavigationLink(value: clip.replyRecipient) {
+            // Inbox and this view are pushed outside the talk path, so a
+            // value link would land beneath them; leave the inbox instead.
+            Button {
+                model.showInbox = false
+                model.talk(to: clip.replyRecipient)
+            } label: {
                 Label("Reply", systemImage: "mic.fill")
             }
         }
