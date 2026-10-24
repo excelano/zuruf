@@ -22,6 +22,16 @@ struct ZurufPhoneApp: App {
                 }
             }
             .environmentObject(model)
+            .onChange(of: model.clips?.received) { _, received in
+                if let received {
+                    Transcripts.shared.update(for: received)
+                }
+            }
+            .onChange(of: model.account == nil) { _, signedOut in
+                if signedOut {
+                    Transcripts.shared.removeAll()
+                }
+            }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {

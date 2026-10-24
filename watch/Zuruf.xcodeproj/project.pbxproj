@@ -569,6 +569,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "$(ZURUF_DISPLAY_NAME)";
 				INFOPLIST_FILE = "Config/Phone-Info.plist";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Zuruf records the messages you send while you hold the talk button.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Zuruf transcribes the messages you receive on this iPhone, and keeps the text only here.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
@@ -592,6 +593,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "$(ZURUF_DISPLAY_NAME)";
 				INFOPLIST_FILE = "Config/Phone-Info.plist";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Zuruf records the messages you send while you hold the talk button.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Zuruf transcribes the messages you receive on this iPhone, and keeps the text only here.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;

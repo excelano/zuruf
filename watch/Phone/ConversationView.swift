@@ -61,6 +61,7 @@ private struct ReceivedBubble: View {
     let clip: ReceivedClip
     let showsSender: Bool
     @EnvironmentObject private var model: AppModel
+    @ObservedObject private var transcripts = Transcripts.shared
 
     var body: some View {
         HStack {
@@ -70,14 +71,23 @@ private struct ReceivedBubble: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                HStack(spacing: 10) {
-                    PlayButton(clipID: clip.id)
-                    Text(clipLength(clip.durationMs))
-                        .monospacedDigit()
-                    if clip.playedAt == nil {
-                        Circle()
-                            .fill(Color.accentColor)
-                            .frame(width: 8, height: 8)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 10) {
+                        PlayButton(clipID: clip.id)
+                        Text(clipLength(clip.durationMs))
+                            .monospacedDigit()
+                        if clip.playedAt == nil {
+                            Circle()
+                                .fill(Color.accentColor)
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                    if let transcript = transcripts.texts[clip.id], !transcript.isEmpty {
+                        Text(transcript)
+                    } else if transcripts.transcribingClipID == clip.id {
+                        Text("Transcribing…")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
                 .padding(.horizontal, 14)
