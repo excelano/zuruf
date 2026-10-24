@@ -23,8 +23,11 @@ struct TalkView: View {
                 .font(.headline)
                 .lineLimit(1)
             ZStack {
+                if isRecording {
+                    Ripples(spread: 0.35)
+                }
                 Circle()
-                    .fill(isRecording ? Color.red : Color.accentColor)
+                    .fill(isRecording ? Color.blue : Color.accentColor)
                 Image(systemName: "mic.fill")
                     .font(.system(size: 36))
                     .foregroundStyle(isRecording ? Color.white : Color.black)

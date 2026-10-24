@@ -8,7 +8,7 @@ import AVFoundation
 // Autoplay uses .ambient, which silent mode mutes, so a watch on silent falls
 // back to the Play button; an explicit play uses .playback, which it does not.
 @MainActor
-final class ClipPlayer: ObservableObject {
+final class ClipPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     static let shared = ClipPlayer()
 
     @Published private(set) var playingClipID: String?
@@ -55,7 +55,16 @@ final class ClipPlayer: ObservableObject {
         try session.setCategory(category, mode: .default, policy: .default)
         try session.setActive(true)
         let player = try AVAudioPlayer(data: data)
+        player.delegate = self
         self.player = player
         player.play()
+    }
+
+    nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        Task { @MainActor in
+            if self.player === player {
+                playingClipID = nil
+            }
+        }
     }
 }

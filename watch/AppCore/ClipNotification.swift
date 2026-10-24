@@ -9,7 +9,23 @@ import UserNotifications
 enum ClipNotification {
     static let category = "clip"
     static let playAutomaticallyKey = "playAutomatically"
+    private static let playAutomaticallyChangedAtKey = "playAutomaticallyChangedAt"
     private static let autoplayedKey = "autoplayedClipIDs"
+
+    static var playAutomatically: Bool {
+        UserDefaults.standard.object(forKey: playAutomaticallyKey) as? Bool ?? true
+    }
+
+    // When the setting last changed, on whichever device changed it, so the
+    // watch and phone keep the newer of their two values.
+    static var playAutomaticallyChangedAt: Double {
+        UserDefaults.standard.double(forKey: playAutomaticallyChangedAtKey)
+    }
+
+    static func setPlayAutomatically(_ isOn: Bool, changedAt: Double) {
+        UserDefaults.standard.set(isOn, forKey: playAutomaticallyKey)
+        UserDefaults.standard.set(changedAt, forKey: playAutomaticallyChangedAtKey)
+    }
 
     static func clipID(in content: UNNotificationContent) -> String? {
         guard let clipID = content.userInfo["clip_id"] as? String,

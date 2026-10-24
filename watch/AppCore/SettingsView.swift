@@ -7,6 +7,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var model: AppModel
+    @ObservedObject private var link = AccountLink.shared
     @AppStorage(ClipNotification.playAutomaticallyKey) private var playAutomatically = true
     @State private var confirmDelete = false
     @State private var isDeleting = false
@@ -16,9 +17,17 @@ struct SettingsView: View {
         List {
             #if os(watchOS)
             Section {
-                Toggle("Play automatically", isOn: $playAutomatically)
+                Toggle("Play automatically", isOn: playAutomaticallyBinding)
             } footer: {
                 Text("Plays new messages as they arrive. On silent, tap Play instead.")
+            }
+            #else
+            if link.hasWatch {
+                Section {
+                    Toggle("Play automatically on watch", isOn: playAutomaticallyBinding)
+                } footer: {
+                    Text("Your watch plays new messages as they arrive. On silent, it shows a Play button instead.")
+                }
             }
             #endif
             if let account = model.account {
@@ -45,6 +54,12 @@ struct SettingsView: View {
         } message: {
             Text("Your account and every message you sent or received are deleted from the server. You will need a new invite to join again.")
         }
+    }
+
+    // Reads through @AppStorage so a change from the paired device shows at
+    // once; writes go through AccountLink, which passes them on.
+    private var playAutomaticallyBinding: Binding<Bool> {
+        Binding(get: { playAutomatically }, set: { link.setPlayAutomatically($0) })
     }
 
     private func delete() {
