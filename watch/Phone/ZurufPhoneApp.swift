@@ -30,6 +30,7 @@ struct ZurufPhoneApp: App {
             .onChange(of: model.account == nil) { _, signedOut in
                 if signedOut {
                     Transcripts.shared.removeAll()
+                    UNUserNotificationCenter.current().setBadgeCount(0)
                 }
             }
         }

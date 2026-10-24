@@ -29,12 +29,11 @@ final class AccountLink: NSObject, ObservableObject, WCSessionDelegate {
         WCSession.default.activate()
     }
 
+    // Leaves any sign-out notice in place: one sent just before a new join
+    // must still reach the other device, which may hold the deleted account.
     func share(_ account: Account) {
         guard let data = try? JSONEncoder().encode(account) else { return }
-        update {
-            $0[Self.accountKey] = data
-            $0[Self.signedOutKey] = nil
-        }
+        update { $0[Self.accountKey] = data }
     }
 
     func shareSignOut(of userID: String) {
@@ -78,6 +77,13 @@ final class AccountLink: NSObject, ObservableObject, WCSessionDelegate {
         Task { @MainActor in await receive(context) }
     }
 
+    // Reads the other device's latest context again, for an account shared
+    // while this one was still signed in to a deleted account.
+    func catchUp() async {
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated else { return }
+        await receive(WCSession.default.receivedApplicationContext)
+    }
+
     // The received context is the other app's latest, which may be old news,
     // so the setting only applies when it changed after this one did.
     private func receive(_ context: [String: Any]) async {
@@ -86,11 +92,12 @@ final class AccountLink: NSObject, ObservableObject, WCSessionDelegate {
            changedAt > ClipNotification.playAutomaticallyChangedAt {
             ClipNotification.setPlayAutomatically(isOn, changedAt: changedAt)
         }
+        if let userID = context[Self.signedOutKey] as? String {
+            AppModel.shared.signedOutElsewhere(userID)
+        }
         if let data = context[Self.accountKey] as? Data,
            let account = try? JSONDecoder().decode(Account.self, from: data) {
             await AppModel.shared.adopt(account)
-        } else if let userID = context[Self.signedOutKey] as? String {
-            AppModel.shared.signedOutElsewhere(userID)
         }
     }
 

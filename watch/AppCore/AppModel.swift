@@ -122,6 +122,11 @@ final class AppModel: ObservableObject {
             self.contacts = try await fetchedContacts
             self.clips = try await fetchedClips
             refreshError = nil
+        } catch APIError.status(401, _) {
+            // The account was deleted, most likely on the paired device, whose
+            // notice this one missed; it may have shared a new account since.
+            signOut()
+            await AccountLink.shared.catchUp()
         } catch {
             refreshError = error.localizedDescription
         }

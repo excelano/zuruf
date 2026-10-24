@@ -44,6 +44,7 @@ struct ConversationView: View {
             if items.isEmpty && pending.isEmpty {
                 Text("No messages")
                     .foregroundStyle(.secondary)
+                    .fixedSize()
             }
         }
         .safeAreaInset(edge: .bottom) {
