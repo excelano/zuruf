@@ -120,11 +120,16 @@ function pushClip(array $clip): void {
     ];
     $background = ['aps' => ['content-available' => 1], 'clip_id' => $clip['id'], 'server_id' => serverId()];
 
-    $handle = curl_init();
+    // APNs ties a connection to the first key used on it, so each key, which
+    // is one per platform and environment, gets a connection of its own.
+    $handles = [];
     foreach (pushTargets($recipients) as [$device, $pushType]) {
+        $handle = $handles[$device['platform'] . '/' . $device['apns_env']] ??= curl_init();
         apnsSend($handle, $device, $pushType, $pushType === 'alert' ? $alert : $background, (int)$clip['expires_at']);
     }
-    curl_close($handle);
+    foreach ($handles as $handle) {
+        curl_close($handle);
+    }
 }
 
 // Someone with a watch is alerted only there. Their phone gets a background

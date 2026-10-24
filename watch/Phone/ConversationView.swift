@@ -24,7 +24,7 @@ struct ConversationView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            VStack(spacing: 12) {
                 ForEach(items) { item in
                     switch item {
                     case .received(let clip):

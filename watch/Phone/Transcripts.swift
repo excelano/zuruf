@@ -15,6 +15,7 @@ final class Transcripts: ObservableObject {
     @Published private(set) var texts: [String: String]
     @Published private(set) var transcribingClipID: String?
     private var queue: [String] = []
+    private var drainTask: Task<Void, Never>?
     private var failed: Set<String> = []
     private let fileURL = URL.applicationSupportDirectory.appending(path: "transcripts.json")
 
@@ -35,8 +36,16 @@ final class Transcripts: ObservableObject {
         queue = dated.sorted { $0.1 > $1.1 }
             .map(\.0)
             .filter { texts[$0] == nil && !failed.contains($0) && $0 != transcribingClipID }
-        guard transcribingClipID == nil else { return }
-        Task { await drain() }
+        guard drainTask == nil else { return }
+        drainTask = Task {
+            await drain()
+            drainTask = nil
+        }
+    }
+
+    // Waits until every clip queued so far is transcribed or has failed.
+    func finish() async {
+        await drainTask?.value
     }
 
     func removeAll() {

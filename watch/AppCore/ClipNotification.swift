@@ -8,6 +8,7 @@ import UserNotifications
 
 enum ClipNotification {
     static let category = "clip"
+    static let replyAction = "reply"
     static let playAutomaticallyKey = "playAutomatically"
     private static let playAutomaticallyChangedAtKey = "playAutomaticallyChangedAt"
     private static let autoplayedKey = "autoplayedClipIDs"

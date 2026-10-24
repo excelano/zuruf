@@ -42,21 +42,3 @@ extension ClipList {
         return dates.max()
     }
 }
-
-private extension ReceivedClip {
-    func belongs(to recipient: Recipient) -> Bool {
-        switch recipient {
-        case .person(let id, _): toGroup == nil && senderId == id
-        case .group(let id, _): toGroup == id
-        }
-    }
-}
-
-private extension SentClip {
-    func belongs(to recipient: Recipient) -> Bool {
-        switch recipient {
-        case .person(let id, _): toGroup == nil && toUser == id
-        case .group(let id, _): toGroup == id
-        }
-    }
-}

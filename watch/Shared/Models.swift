@@ -59,6 +59,16 @@ struct ReceivedClip: Decodable, Identifiable, Hashable {
     }
 }
 
+extension ReceivedClip {
+    // True for a clip in the conversation with this person or group.
+    func belongs(to recipient: Recipient) -> Bool {
+        switch recipient {
+        case .person(let id, _): toGroup == nil && senderId == id
+        case .group(let id, _): toGroup == id
+        }
+    }
+}
+
 struct Receipt: Decodable, Hashable {
     let userId: String
     let playedAt: Date
@@ -71,6 +81,16 @@ struct SentClip: Decodable, Identifiable, Hashable {
     let durationMs: Int
     let createdAt: Date
     let playedBy: [Receipt]
+}
+
+extension SentClip {
+    // True for a clip in the conversation with this person or group.
+    func belongs(to recipient: Recipient) -> Bool {
+        switch recipient {
+        case .person(let id, _): toGroup == nil && toUser == id
+        case .group(let id, _): toGroup == id
+        }
+    }
 }
 
 struct ClipList: Decodable, Equatable {

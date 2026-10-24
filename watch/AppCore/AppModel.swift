@@ -127,8 +127,14 @@ final class AppModel: ObservableObject {
         }
     }
 
+    // Sending to a person or group answers what they sent, so their unplayed
+    // clips count as played.
     func send(_ file: URL, to recipient: Recipient) {
         outbox.enqueue(file, to: recipient)
+        if let answered = clips?.received.filter({ $0.belongs(to: recipient) && $0.playedAt == nil }).map(\.id),
+           !answered.isEmpty {
+            Task { await markPlayed(answered) }
+        }
         if LastRecipient.load() != recipient {
             LastRecipient.save(recipient)
             WidgetCenter.shared.reloadTimelines(ofKind: "Talk")
@@ -139,12 +145,29 @@ final class AppModel: ObservableObject {
         talkPath = [recipient]
     }
 
-    // Clears the unplayed dot at once; the refresh restores it if the server refused.
-    func markPlayed(_ clipID: String) async {
-        if let index = clips?.received.firstIndex(where: { $0.id == clipID && $0.playedAt == nil }) {
-            clips?.received[index].playedAt = Date()
+    // Opens the talk screen for whoever sent a clip, ready for a reply.
+    func reply(toClip clipID: String) async {
+        await refresh()
+        if let clip = clips?.received.first(where: { $0.id == clipID }) {
+            showInbox = false
+            talk(to: clip.replyRecipient)
         }
-        try? await api?.markPlayed(clipID: clipID)
+    }
+
+    func markPlayed(_ clipID: String) async {
+        await markPlayed([clipID])
+    }
+
+    // Clears the unplayed dots at once; the refresh restores any the server refused.
+    func markPlayed(_ clipIDs: [String]) async {
+        for clipID in clipIDs {
+            if let index = clips?.received.firstIndex(where: { $0.id == clipID && $0.playedAt == nil }) {
+                clips?.received[index].playedAt = Date()
+            }
+        }
+        for clipID in clipIDs {
+            try? await api?.markPlayed(clipID: clipID)
+        }
         await refresh()
     }
 

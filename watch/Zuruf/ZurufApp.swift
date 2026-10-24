@@ -43,7 +43,11 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
         let center = UNUserNotificationCenter.current()
         center.delegate = self
         center.setNotificationCategories([
-            UNNotificationCategory(identifier: ClipNotification.category, actions: [], intentIdentifiers: [])
+            UNNotificationCategory(
+                identifier: ClipNotification.category,
+                actions: [UNNotificationAction(identifier: ClipNotification.replyAction, title: "Reply", options: [.foreground])],
+                intentIdentifiers: []
+            )
         ])
         AccountLink.shared.activate()
         Task { @MainActor in
@@ -63,13 +67,12 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
         return [.banner, .list, .sound]
     }
 
-    // Tapping a clip notification opens the app and plays it.
+    // Reply opens the sender's talk screen; a tap on the notification only
+    // opens the app.
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse) async {
-        let content = response.notification.request.content
-        guard let clipID = ClipNotification.clipID(in: content) else { return }
-        await MainActor.run {
-            ClipPlayer.shared.play(clipID: clipID, attachment: content.attachments.first?.url, category: .playback)
-        }
+        guard response.actionIdentifier == ClipNotification.replyAction,
+              let clipID = ClipNotification.clipID(in: response.notification.request.content) else { return }
+        await AppModel.shared.reply(toClip: clipID)
     }
 }
