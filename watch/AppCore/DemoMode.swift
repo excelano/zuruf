@@ -1,5 +1,5 @@
 // DemoMode.swift
-// Zuruf
+// AppCore
 // Author: David M. Anderson
 // Built with AI assistance (Claude, Anthropic)
 

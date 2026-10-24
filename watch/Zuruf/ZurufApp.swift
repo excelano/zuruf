@@ -45,6 +45,7 @@ final class AppDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCent
         center.setNotificationCategories([
             UNNotificationCategory(identifier: ClipNotification.category, actions: [], intentIdentifiers: [])
         ])
+        AccountLink.shared.activate()
         Task { @MainActor in
             AppModel.shared.outbox.send()
             await AppModel.shared.requestNotifications()

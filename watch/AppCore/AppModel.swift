@@ -1,12 +1,16 @@
 // AppModel.swift
-// Zuruf
+// AppCore
 // Author: David M. Anderson
 // Built with AI assistance (Claude, Anthropic)
 
 import Foundation
 import UserNotifications
-import WatchKit
 import WidgetKit
+#if os(watchOS)
+import WatchKit
+#else
+import UIKit
+#endif
 
 @MainActor
 final class AppModel: ObservableObject {
@@ -16,6 +20,12 @@ final class AppModel: ObservableObject {
     static let apnsEnvironment = "sandbox"
     #else
     static let apnsEnvironment = "production"
+    #endif
+
+    #if os(watchOS)
+    static let platform = "watchos"
+    #else
+    static let platform = "ios"
     #endif
 
     @Published private(set) var account = DemoMode.isActive ? DemoMode.account : AccountStore.load()
@@ -40,6 +50,26 @@ final class AppModel: ObservableObject {
     func join(server: String, code: String, displayName: String) async throws {
         let url = try ZurufAPI.serverURL(from: server)
         let account = try await ZurufAPI.redeem(server: url, code: code, displayName: displayName)
+        try await signIn(account)
+        AccountLink.shared.share(account)
+    }
+
+    // Signs in with the account the paired watch or phone passed over, as a
+    // device of its own. One already signed in keeps its account.
+    func adopt(_ shared: Account) async {
+        guard account == nil, !DemoMode.isActive,
+              let account = try? await ZurufAPI(account: shared).linkDevice() else { return }
+        try? await signIn(account)
+    }
+
+    // The paired watch or phone deleted this account, so it is gone here too.
+    func signedOutElsewhere(_ userID: String) {
+        if account?.userID == userID {
+            signOut()
+        }
+    }
+
+    private func signIn(_ account: Account) async throws {
         try AccountStore.save(account)
         self.account = account
         await registerDevice()
@@ -57,6 +87,9 @@ final class AppModel: ObservableObject {
     }
 
     private func signOut() {
+        if let account {
+            AccountLink.shared.shareSignOut(of: account.userID)
+        }
         AccountStore.delete()
         LastRecipient.clear()
         WidgetCenter.shared.reloadTimelines(ofKind: "Talk")
@@ -69,7 +102,11 @@ final class AppModel: ObservableObject {
     func requestNotifications() async {
         guard !DemoMode.isActive else { return }
         _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+        #if os(watchOS)
         WKApplication.shared().registerForRemoteNotifications()
+        #else
+        UIApplication.shared.registerForRemoteNotifications()
+        #endif
     }
 
     func apnsTokenReceived(_ token: String) async {
@@ -126,6 +163,6 @@ final class AppModel: ObservableObject {
 
     private func registerDevice() async {
         guard let api, let apnsToken else { return }
-        try? await api.registerDevice(apnsToken: apnsToken, environment: Self.apnsEnvironment)
+        try? await api.registerDevice(apnsToken: apnsToken, environment: Self.apnsEnvironment, platform: Self.platform)
     }
 }

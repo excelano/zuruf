@@ -1,5 +1,5 @@
 // SettingsView.swift
-// Zuruf
+// AppCore
 // Author: David M. Anderson
 // Built with AI assistance (Claude, Anthropic)
 
@@ -14,11 +14,13 @@ struct SettingsView: View {
 
     var body: some View {
         List {
+            #if os(watchOS)
             Section {
                 Toggle("Play automatically", isOn: $playAutomatically)
             } footer: {
                 Text("Plays new messages as they arrive. On silent, tap Play instead.")
             }
+            #endif
             if let account = model.account {
                 Section {
                     LabeledContent("Name", value: account.displayName)

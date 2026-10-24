@@ -51,30 +51,43 @@ struct ZurufAPI {
         return url
     }
 
+    private struct Credentials: Decodable {
+        let userId: String
+        let token: String
+        let serverId: String
+    }
+
     static func redeem(server: URL, code: String, displayName: String) async throws -> Account {
-        struct Redeemed: Decodable {
-            let userId: String
-            let token: String
-            let serverId: String
-        }
         var request = URLRequest(url: server.appending(path: "v1/invites/redeem"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONEncoder().encode(["code": code, "display_name": displayName])
-        let redeemed: Redeemed = try await send(request)
+        let credentials: Credentials = try await send(request)
         return Account(
             serverURL: server,
-            serverID: redeemed.serverId,
-            userID: redeemed.userId,
+            serverID: credentials.serverId,
+            userID: credentials.userId,
             displayName: displayName,
-            token: redeemed.token
+            token: credentials.token
         )
     }
 
-    func registerDevice(apnsToken: String, environment: String) async throws {
+    // A new device under this account, for the paired watch or phone.
+    func linkDevice() async throws -> Account {
+        let credentials: Credentials = try await Self.send(request("v1/devices/link", method: "POST"))
+        return Account(
+            serverURL: account.serverURL,
+            serverID: credentials.serverId,
+            userID: credentials.userId,
+            displayName: account.displayName,
+            token: credentials.token
+        )
+    }
+
+    func registerDevice(apnsToken: String, environment: String, platform: String) async throws {
         var request = request("v1/devices", method: "POST")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(["apns_token": apnsToken, "apns_env": environment])
+        request.httpBody = try JSONEncoder().encode(["apns_token": apnsToken, "apns_env": environment, "platform": platform])
         _ = try await Self.data(for: request)
     }
 

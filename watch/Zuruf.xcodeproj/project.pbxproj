@@ -92,9 +92,14 @@
 			path = ZurufWidgets;
 			sourceTree = "<group>";
 		};
-		A50000000000000000000006 /* Container */ = {
+		A50000000000000000000007 /* AppCore */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Container;
+			path = AppCore;
+			sourceTree = "<group>";
+		};
+		A50000000000000000000006 /* Phone */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Phone;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -130,8 +135,9 @@
 				A50000000000000000000001 /* Zuruf */,
 				A50000000000000000000002 /* ZurufNotificationService */,
 				A50000000000000000000003 /* Shared */,
+				A50000000000000000000007 /* AppCore */,
 				A50000000000000000000005 /* ZurufWidgets */,
-				A50000000000000000000006 /* Container */,
+				A50000000000000000000006 /* Phone */,
 				A70000000000000000000003 /* Config */,
 				A70000000000000000000002 /* Products */,
 			);
@@ -178,6 +184,7 @@
 			fileSystemSynchronizedGroups = (
 				A50000000000000000000001 /* Zuruf */,
 				A50000000000000000000003 /* Shared */,
+				A50000000000000000000007 /* AppCore */,
 			);
 			name = ZurufWatch;
 			productName = ZurufWatch;
@@ -230,6 +237,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC0000000000000000000005 /* Build configuration list for PBXNativeTarget "Zuruf" */;
 			buildPhases = (
+				AA0000000000000000000004 /* Sources */,
 				AB0000000000000000000004 /* Resources */,
 				A40000000000000000000002 /* Embed Watch Content */,
 			);
@@ -239,12 +247,14 @@
 				AD0000000000000000000003 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				A50000000000000000000006 /* Container */,
+				A50000000000000000000006 /* Phone */,
+				A50000000000000000000003 /* Shared */,
+				A50000000000000000000007 /* AppCore */,
 			);
 			name = Zuruf;
 			productName = Zuruf;
 			productReference = A20000000000000000000006 /* Zuruf.app */;
-			productType = "com.apple.product-type.application.watchapp2-container";
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -331,6 +341,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA0000000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA0000000000000000000002 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -411,7 +428,8 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Zuruf records the messages you send while you hold the talk button.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKApplication = YES;
-				INFOPLIST_KEY_WKWatchOnly = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "$(ZURUF_CONTAINER_BUNDLE_ID)";
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -438,7 +456,8 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Zuruf records the messages you send while you hold the talk button.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKApplication = YES;
-				INFOPLIST_KEY_WKWatchOnly = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "$(ZURUF_CONTAINER_BUNDLE_ID)";
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -547,7 +566,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(ZURUF_DISPLAY_NAME)";
+				INFOPLIST_FILE = "Config/Phone-Info.plist";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Zuruf records the messages you send while you hold the talk button.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(ZURUF_CONTAINER_BUNDLE_ID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -563,7 +587,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(ZURUF_DISPLAY_NAME)";
+				INFOPLIST_FILE = "Config/Phone-Info.plist";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Zuruf records the messages you send while you hold the talk button.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				SWIFT_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(ZURUF_CONTAINER_BUNDLE_ID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
