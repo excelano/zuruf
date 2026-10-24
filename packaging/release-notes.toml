@@ -2,9 +2,11 @@
 # against the release being cut, so notes left from last time stop the release
 # rather than reaching the listing.
 
-version = "0.2.1"
+version = "0.3.0"
 
 [locales."en-us"]
 whats-new = """
-Swipe a clip in the inbox to mark it as read or to delete it. The circular complication now matches the app icon, a black microphone on yellow.
+Zuruf now has an iPhone app. Each person and group opens a conversation you can read, with a transcript of every clip made on your iPhone, and a hold-to-talk button to answer. Joining on the watch or the iPhone signs in both. With a watch, only the watch alerts; without one, the iPhone does.
+
+On the watch, a notification's new Reply button opens the talk screen, and answering someone marks their clips as played. Swipe a clip in the inbox to mark it as read or delete it. The circular complication now matches the app icon.
 """

@@ -20,13 +20,15 @@ final class Transcripts: ObservableObject {
     private let fileURL = URL.applicationSupportDirectory.appending(path: "transcripts.json")
 
     init() {
-        texts = (try? Data(contentsOf: fileURL)).flatMap { try? JSONDecoder().decode([String: String].self, from: $0) } ?? [:]
+        texts = DemoMode.isActive ? DemoMode.transcripts
+            : (try? Data(contentsOf: fileURL)).flatMap { try? JSONDecoder().decode([String: String].self, from: $0) } ?? [:]
     }
 
     // Transcribes the clips that have none yet, newest first, one at a time,
     // and drops the transcripts of clips that are gone from the server. A clip
     // that fails is tried again the next time the app launches.
     func update(for clips: ClipList) {
+        guard !DemoMode.isActive else { return }
         let dated = clips.received.map { ($0.id, $0.createdAt) } + clips.sent.map { ($0.id, $0.createdAt) }
         let ids = Set(dated.map(\.0))
         if texts.keys.contains(where: { !ids.contains($0) }) {

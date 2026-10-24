@@ -1,9 +1,10 @@
 #!/bin/sh
 # The App Store screenshots, as recipes. shots-appstore builds the app for the
-# simulator, boots each simulator ship.toml names, installs the embedded watch
-# app, and calls this with the simulator, the language and where the frames go;
-# this file is the half that is Zuruf's: which screens, from the demo data a
-# Debug build shows when launched with --demo.
+# simulator, boots each simulator ship.toml names, installs the iPhone app or
+# its embedded watch app to match, and calls this with the simulator, the
+# language and where the frames go; this file is the half that is Zuruf's:
+# which screens, from the demo data a Debug build shows when launched with
+# --demo.
 #
 #     ./packaging/ios/shots.sh --app <Zuruf.app> --device <udid> --lang en-us --outdir <dir>
 #
@@ -26,10 +27,10 @@ case "$lang" in
     *) echo "shots.sh: no set is written for $lang" >&2; exit 2 ;;
 esac
 case "$(xcrun simctl list devices | grep -F "($device)" | head -1)" in
-    *Watch*) ;;
-    *) echo "shots.sh: Zuruf is watch-only; $device is not a watch" >&2; exit 2 ;;
+    *Watch*) watch=1; plist=$(echo "$app"/Watch/*.app/Info.plist) ;;
+    *) watch=; plist=$app/Info.plist ;;
 esac
-bundle=$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app"/Watch/*.app/Info.plist)
+bundle=$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$plist")
 mkdir -p "$outdir"
 settle=10
 shot() {
@@ -41,7 +42,13 @@ shot() {
     xcrun simctl io "$device" screenshot --type=png "$outdir/$name.png" >/dev/null
     echo "$name"
 }
-shot 01-contacts
-shot 02-talk --demo-talk --demo-recording
-shot 03-inbox --demo-inbox
+if [ -n "$watch" ]; then
+    shot 01-contacts
+    shot 02-talk --demo-talk --demo-recording
+    shot 03-inbox --demo-inbox
+else
+    shot 01-contacts
+    shot 02-conversation --demo-talk
+    shot 03-talk --demo-talk --demo-recording
+fi
 xcrun simctl terminate "$device" "$bundle" >/dev/null 2>&1 || true

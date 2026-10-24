@@ -204,22 +204,28 @@ private struct TalkBar: View {
     @StateObject private var recorder = Recorder()
     @State private var isPressed = false
     @State private var micDenied = false
+    private let demoStartedAt: Date? = DemoMode.has("--demo-recording") ? Date().addingTimeInterval(-4) : nil
+
+    private var isRecording: Bool { recorder.isRecording || demoStartedAt != nil }
+    private var startedAt: Date? { recorder.startedAt ?? demoStartedAt }
 
     var body: some View {
         VStack(spacing: 6) {
             // A fixed height, so the bar keeps its size and the conversation
-            // above it stays put when recording starts.
+            // above it stays put when recording starts; drawn above the
+            // ripples, which spread over it.
             footer
                 .frame(height: 28)
+                .zIndex(1)
             ZStack {
-                if recorder.isRecording {
+                if isRecording {
                     Ripples(spread: 1.0)
                 }
                 Circle()
-                    .fill(recorder.isRecording ? Color.blue : Color.accentColor)
+                    .fill(isRecording ? Color.blue : Color.accentColor)
                 Image(systemName: "mic.fill")
                     .font(.system(size: 30))
-                    .foregroundStyle(recorder.isRecording ? Color.white : Color.black)
+                    .foregroundStyle(isRecording ? Color.white : Color.black)
             }
             .frame(width: 76, height: 76)
             .scaleEffect(isPressed ? 0.94 : 1)
@@ -249,7 +255,7 @@ private struct TalkBar: View {
             Text("Allow the microphone in Settings")
                 .font(.footnote)
                 .foregroundStyle(.red)
-        } else if let startedAt = recorder.startedAt {
+        } else if let startedAt {
             Text(timerInterval: startedAt...startedAt.addingTimeInterval(Recorder.maxDuration), countsDown: false)
                 .font(.title3.bold().monospacedDigit())
         } else {

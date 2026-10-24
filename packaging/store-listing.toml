@@ -11,21 +11,24 @@
 # fields, never here: this repository is public.
 
 apple-review-notes = """
-Zuruf sends short voice clips between Apple Watches, the way a two-way radio does, for a small group of people who know each other. It was built to replace Walkie-Talkie, which watchOS 27 no longer includes. We have asked for unlisted distribution through Apple's request form, and this version is set to release manually. Everything to review is on the watch. The iOS part of the upload holds no code; it is there because App Store Connect delivers a watch app inside one.
+Zuruf sends short voice clips between people who know each other, the way a two-way radio does. On Apple Watch a clip plays from its notification without a tap. On iPhone each person and group is a conversation, with a transcript of every clip made on the phone itself. It was built to replace Walkie-Talkie, which watchOS 27 no longer includes. We have asked for unlisted distribution through Apple's request form, and this version is set to release manually. The iPhone app works with or without a paired watch, so everything below can be reviewed on an iPhone alone.
 
 Nobody can sign up. Accounts come from invite codes issued by a Zuruf server. For review we run a demo server, kept apart from our group's, where the only other account is Echo, a bot that sends every clip straight back. This record's sign-in fields hold the demo server's address (User Name) and a reusable invite code (Password).
 
 SIGNING IN
-Zuruf opens on a join screen with three fields. Change Server from zuruf.excelano.com, our group's server, to demo.zuruf.excelano.com. Enter the invite code and any display name, tap Join, and allow notifications, since a clip arrives as a notification.
+Both apps open on a join screen with three fields. Change Server from zuruf.excelano.com, our group's server, to demo.zuruf.excelano.com. Enter the invite code and any display name, tap Join, and allow notifications, since a clip arrives as a notification. Joining on the iPhone signs a paired watch in by itself, and joining on the watch signs in the iPhone.
 
-A ROUND TRIP WITH ECHO
-Tap Echo for the talk screen. Hold the yellow button while speaking and release it to send. The microphone permission is requested on the first hold, and the microphone records only while the button is held. Echo's reply arrives within a few seconds and plays from its notification by itself, without a tap; with the watch on silent, the notification offers a Play button instead. Inbox keeps the clip to replay or answer, and its Sent list shows that Echo played yours. Swiping a received clip in Inbox marks it as read or deletes it.
+ON IPHONE
+Tap Echo to open the conversation. Hold the yellow button at the bottom while speaking and release it to send. The microphone permission is requested on the first hold, and the microphone records only while the button is held. Echo's reply appears a few seconds later, and each clip shows its transcript, made on the iPhone with Apple's Speech framework. Play hears a clip again; touching and holding one marks it as read or deletes it. Without a watch, each clip arrives as an alert on the iPhone, and tapping it opens the conversation. With a watch, only the watch alerts, and the iPhone updates in the background so the conversation and its transcripts are ready when opened.
 
-SETTINGS AND THE WATCH FACE
-Settings can turn automatic playback off, and holds Delete account, which erases the account and every clip to or from it on the server. The complication shows the last person or group you talked to and opens the talk screen for them.
+ON APPLE WATCH
+Tap Echo for the talk screen and hold the yellow button to talk. Echo's reply plays from its notification by itself; with the watch on silent, the notification's Play button plays it, and Reply opens the talk screen to answer. Inbox keeps clips to replay, and swiping one marks it as read or deletes it. The complication shows the last person or group you talked to and opens the talk screen for them.
+
+SETTINGS
+The watch's Settings can turn automatic playback off, and the iPhone shows the same switch as Play automatically on watch. Delete account, on either device, erases the account and every clip to or from it on the server and signs both devices out.
 
 DATA
-The server keeps each account's display name, a hash of the watch's sign-in token and its push token, and each clip with its sender, its recipients and when they played it. Clips are deleted seven days after they are sent. Apple's push service carries the sender's name and a clip identifier, never the audio. There is no analytics, advertising or tracking code. Privacy policy: https://zuruf.excelano.com/privacy. Source for the app and the server: https://github.com/excelano/zuruf.
+The server keeps each account's display name, a hash of each device's sign-in token and its push token, and each clip with its sender, its recipients and when they played it. Clips are deleted seven days after they are sent. Apple's push service carries the sender's name and a clip identifier, never the audio. Transcripts are made and kept on the iPhone that shows them and are never uploaded. There is no analytics, advertising or tracking code. Privacy policy: https://zuruf.excelano.com/privacy. Source for the apps and the server: https://github.com/excelano/zuruf.
 
 Questions about this review: David M. Anderson, david.anderson@excelano.com.
 """
@@ -37,17 +40,19 @@ privacy = "https://zuruf.excelano.com/privacy"
 description = """
 Hold the yellow button, talk, and let go. A few seconds later your voice plays out loud on the other person's Apple Watch, whether they are in the next room or another state, over Wi-Fi or cellular.
 
-Nobody has to pick up. A clip plays the moment its notification lands, the way a radio would. If their watch is on silent it waits behind a Play button instead, and the inbox keeps every clip for a week to hear again.
+Nobody has to pick up. A clip plays the moment its notification lands, the way a radio would. If their watch is on silent it waits behind a Play button instead, and Reply on the notification opens the talk button to answer.
 
-Talk to one person or to a whole group. Reply to a clip from the inbox, and check under Sent who has heard yours. A complication on the watch face keeps your last conversation one tap away. If the signal drops before you let go, the watch holds the clip and sends it when the connection comes back.
+On iPhone, every person and group is a conversation you can read. Each clip is transcribed on the iPhone that shows it, yours as well as theirs, so the back-and-forth reads like a message thread, though the only way to send is still to speak. Transcripts are made on the phone and stay there. No watch? The iPhone app works on its own, with an alert for each clip.
+
+Talk to one person or to a whole group, see who has heard yours, and mark a clip as read or delete it. Join once, on either device, and the other signs in by itself. A complication on the watch face keeps your last conversation one tap away. If the signal drops before you let go, the clip waits and sends when the connection comes back.
 
 There is no sign-up and no directory of strangers. Zuruf connects to a private server, and an account on it comes only from an invite code handed out by the person who runs it. The only names you see are the people in your group. Clips go to that server and nowhere else, Apple's push service sees only who a clip is from, and each clip is deleted seven days after it was sent. The microphone is on only while you hold the button, and there are no ads, analytics or tracking.
 
-There is no iPhone app to install. The watch app and its server are published on GitHub under the MIT license, so every privacy claim above can be checked against the code.
+The apps and their server are published on GitHub under the MIT license, so every privacy claim above can be checked against the code.
 """
 
 [locales."en-us".apple]
 name = "Zuruf"
 subtitle = "Push to talk for small groups"
-promotional-text = "Hold, talk, let go. Seconds later your voice plays on their wrist, in the next room or another state. No iPhone app, no sign-up, no strangers: invitation only."
-keywords = "voice,messages,ptt,intercom,radio,two-way,group,wrist,audio,talk,crew,team,private,open source"
+promotional-text = "Hold, talk, let go. Seconds later your voice plays on their wrist, and your iPhone shows every clip as text. No sign-up, no strangers: invitation only."
+keywords = "voice,messages,ptt,intercom,radio,two-way,group,wrist,audio,talk,transcript,team,private,open source"

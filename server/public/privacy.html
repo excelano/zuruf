@@ -21,26 +21,29 @@ a { color: var(--accent); }
 <body>
 <main>
 <h1>Zuruf Privacy Policy</h1>
-<p class="updated">Effective October 19, 2026</p>
+<p class="updated">Effective October 23, 2026</p>
 
-<p>Zuruf is for small groups who want to use their Apple Watches like walkie-talkies. This policy covers the Zuruf app published by Excelano LLC and the Zuruf server it operates at zuruf.excelano.com. Zuruf is invite-only: nobody can use it without an invitation from the person who runs the server.</p>
+<p>Zuruf is for small groups who want to use their Apple Watches and iPhones like walkie-talkies. This policy covers the Zuruf apps published by Excelano LLC and the Zuruf server it operates at zuruf.excelano.com. Zuruf is invite-only: nobody can use it without an invitation from the person who runs the server.</p>
 
 <h2>What the server stores</h2>
-<p>When you join with an invite, the server stores the display name you choose and creates an account for your watch. It keeps a token that identifies your watch to the server, stored only as a one-way hash, and the push notification token Apple assigns your watch, so it can tell your watch when a message arrives.</p>
+<p>When you join with an invite, the server stores the display name you choose and creates an account, which your watch and your iPhone share when you use both. For each device it keeps a token that identifies the device to the server, stored only as a one-way hash, and the push notification token Apple assigns it, so it can tell the device when a message arrives.</p>
 <p>When you send a message, the server stores the recording, who sent it, who it is for, its length and when it was sent. It also records when each recipient plays it, so the sender can see who has heard it. Recordings and their records are deleted seven days after they are sent.</p>
-<p>The server does not collect your location, your contacts, your health data, advertising identifiers or anything else from your watch, and it contains no analytics, advertising or tracking code.</p>
+<p>The server does not collect your location, your contacts, your health data, advertising identifiers or anything else from your devices, and it contains no analytics, advertising or tracking code.</p>
+
+<h2>Transcripts</h2>
+<p>The iPhone app turns each recording into text with Apple's speech recognition, on the iPhone itself. Transcripts are kept only on that iPhone, are never sent to the server or anywhere else, and are deleted from the phone when their recording expires or when you delete your account.</p>
 
 <h2>Who can see your messages</h2>
-<p>A recording is served only to the people it was sent to: one person, or the members of a group. Everyone on the server can see the display names of everyone else on it, so that they can choose who to talk to.</p>
-<p>Recordings travel between your watch and the server over an encrypted connection and are stored on the server unencrypted. The server's operator can therefore technically access them. Zuruf does not offer end-to-end encryption.</p>
+<p>A recording is served only to the people it was sent to, one person or the members of a group, and back to its sender, whose iPhone transcribes it. Everyone on the server can see the display names of everyone else on it, so that they can choose who to talk to.</p>
+<p>Recordings travel between your devices and the server over an encrypted connection and are stored on the server unencrypted. The server's operator can therefore technically access them. Zuruf does not offer end-to-end encryption.</p>
 
 <h2>Apple and the hosting provider</h2>
-<p>To tell your watch about a new message, the server sends a notification through Apple's push notification service. The notification carries the sender's display name, the group name if there is one, and an identifier for the message. The recording itself never passes through Apple; your watch downloads it from the server.</p>
+<p>To tell your devices about a new message, the server sends a notification through Apple's push notification service. The notification carries the sender's display name, the group name if there is one, and an identifier for the message. The recording itself never passes through Apple; your device downloads it from the server.</p>
 <p>The server runs on shared web hosting. Like any website, the hosting provider's web server keeps access logs, which include the IP address of each request.</p>
 <p>Nothing is sold or shared with anyone else.</p>
 
 <h2>Deleting your data</h2>
-<p>Recordings delete themselves after seven days. To delete your account, choose Delete account in the app's Settings. That removes your account, your watch's registration and every message sent by or to you from the server, and erases what the app stored on the watch. You can also ask the person who invited you, or write to the address below.</p>
+<p>Recordings delete themselves after seven days. To delete your account, choose Delete account in the app's Settings. That removes your account, your devices' registrations and every message sent by or to you from the server, signs out your watch and your iPhone, and erases what the apps stored on them, transcripts included. You can also ask the person who invited you, or write to the address below.</p>
 
 <h2>Children</h2>
 <p>Zuruf is a general-audience app for small groups of people who know each other. It is not directed to children.</p>
