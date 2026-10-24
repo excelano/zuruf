@@ -140,12 +140,13 @@ private struct SentBubble: View {
     let clip: SentClip
     let isGroup: Bool
     @EnvironmentObject private var model: AppModel
+    @ObservedObject private var transcripts = Transcripts.shared
 
     var body: some View {
         HStack {
             Spacer(minLength: 60)
             VStack(alignment: .trailing, spacing: 4) {
-                OutgoingShape(text: clipLength(clip.durationMs))
+                OutgoingShape(text: clipLength(clip.durationMs), transcript: transcripts.texts[clip.id])
                 Text("\(clipTime(clip.createdAt)) · \(playedSummary)")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
@@ -167,7 +168,7 @@ private struct PendingBubble: View {
         HStack {
             Spacer(minLength: 60)
             VStack(alignment: .trailing, spacing: 4) {
-                OutgoingShape(text: "Sending…")
+                OutgoingShape(text: "Sending…", transcript: nil)
                     .opacity(0.6)
                 Text("Waiting to send")
                     .font(.caption2)
@@ -179,14 +180,20 @@ private struct PendingBubble: View {
 
 private struct OutgoingShape: View {
     let text: String
+    let transcript: String?
 
     var body: some View {
-        Label(text, systemImage: "mic.fill")
-            .monospacedDigit()
-            .foregroundStyle(.black)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 18))
+        VStack(alignment: .leading, spacing: 6) {
+            Label(text, systemImage: "mic.fill")
+                .monospacedDigit()
+            if let transcript, !transcript.isEmpty {
+                Text(transcript)
+            }
+        }
+        .foregroundStyle(.black)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 18))
     }
 }
 
@@ -199,10 +206,13 @@ private struct TalkBar: View {
 
     var body: some View {
         VStack(spacing: 6) {
+            // A fixed height, so the bar keeps its size and the conversation
+            // above it stays put when recording starts.
             footer
+                .frame(height: 28)
             ZStack {
                 if recorder.isRecording {
-                    Ripples(spread: 2.2)
+                    Ripples(spread: 1.0)
                 }
                 Circle()
                     .fill(recorder.isRecording ? Color.blue : Color.accentColor)

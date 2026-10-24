@@ -73,7 +73,7 @@ struct SentClip: Decodable, Identifiable, Hashable {
     let playedBy: [Receipt]
 }
 
-struct ClipList: Decodable {
+struct ClipList: Decodable, Equatable {
     var received: [ReceivedClip]
     let sent: [SentClip]
 }

@@ -146,8 +146,8 @@ check "Bob has one unplayed clip from Alice" '.received | length == 1 and .[0].s
 call GET "/v1/clips/$clip/audio" $bob -o "$work/fetched.m4a"
 expect 200 "recipient downloads audio"
 cmp -s "$work/short.m4a" "$work/fetched.m4a" && echo "ok   audio bytes match" || { echo "FAIL audio bytes differ"; failures=$((failures + 1)); }
-call GET "/v1/clips/$clip/audio" $alice
-expect 404 "sender cannot download"
+call GET "/v1/clips/$clip/audio" $alice -o "$work/fetched-sender.m4a"
+expect 200 "sender downloads their own audio"
 
 call POST "/v1/clips/$clip/played" $bob
 expect 200 "mark played"

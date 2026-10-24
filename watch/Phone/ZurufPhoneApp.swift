@@ -22,9 +22,9 @@ struct ZurufPhoneApp: App {
                 }
             }
             .environmentObject(model)
-            .onChange(of: model.clips?.received) { _, received in
-                if let received {
-                    Transcripts.shared.update(for: received)
+            .onChange(of: model.clips) { _, clips in
+                if let clips {
+                    Transcripts.shared.update(for: clips)
                 }
             }
             .onChange(of: model.account == nil) { _, signedOut in

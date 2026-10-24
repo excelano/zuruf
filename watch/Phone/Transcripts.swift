@@ -6,8 +6,8 @@
 import AVFoundation
 import Speech
 
-// Transcripts of received clips, made on this phone in its own language and
-// kept only here, keyed by clip.
+// Transcripts of sent and received clips, made on this phone in its own
+// language and kept only here, keyed by clip.
 @MainActor
 final class Transcripts: ObservableObject {
     static let shared = Transcripts()
@@ -25,14 +25,15 @@ final class Transcripts: ObservableObject {
     // Transcribes the clips that have none yet, newest first, one at a time,
     // and drops the transcripts of clips that are gone from the server. A clip
     // that fails is tried again the next time the app launches.
-    func update(for clips: [ReceivedClip]) {
-        let ids = Set(clips.map(\.id))
+    func update(for clips: ClipList) {
+        let dated = clips.received.map { ($0.id, $0.createdAt) } + clips.sent.map { ($0.id, $0.createdAt) }
+        let ids = Set(dated.map(\.0))
         if texts.keys.contains(where: { !ids.contains($0) }) {
             texts = texts.filter { ids.contains($0.key) }
             save()
         }
-        queue = clips.sorted { $0.createdAt > $1.createdAt }
-            .map(\.id)
+        queue = dated.sorted { $0.1 > $1.1 }
+            .map(\.0)
             .filter { texts[$0] == nil && !failed.contains($0) && $0 != transcribingClipID }
         guard transcribingClipID == nil else { return }
         Task { await drain() }

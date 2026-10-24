@@ -180,8 +180,12 @@ function requireAudibleClip(array $device, string $id): array {
     return $clip;
 }
 
+// Served to its recipients and to its sender, whose phone transcribes it.
 function streamClipAudio(array $device, string $id): never {
-    $clip = requireAudibleClip($device, $id);
+    $clip = findClip($id);
+    if ($clip === null || $clip['sender_id'] !== $device['user_id']) {
+        $clip = requireAudibleClip($device, $id);
+    }
     $path = clipPath($clip['id']);
     if (!is_file($path)) {
         fail(404, 'not_found');
